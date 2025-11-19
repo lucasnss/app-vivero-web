@@ -1,0 +1,87 @@
+[
+  {
+    "id": "1",
+    "name": "Monstera Deliciosa",
+    "description": "Monstera Deliciosa de excelente calidad. Ideal para plantas de interior.",
+    "category_id": "1",
+    "price": 2500,
+    "stock": 15,
+    "image": "/placeholder.jpg",
+    "images": [
+      "/placeholder.jpg"
+    ],
+    "scientificName": "Monstera deliciosa",
+    "care": "Riego moderado, luz indirecta, temperatura ambiente.",
+    "characteristics": "Producto de alta calidad para plantas de interior. Resistente y duradero.",
+    "origin": "Cultivado en viveros especializados",
+    "featured": true
+  },
+  {
+    "id": "2",
+    "name": "Ficus Lyrata",
+    "description": "Ficus Lyrata de excelente calidad. Ideal para plantas de interior.",
+    "category_id": "1",
+    "price": 3200,
+    "stock": 8,
+    "image": "/placeholder.jpg",
+    "images": [
+      "/placeholder.jpg"
+    ],
+    "scientificName": "Ficus lyrata",
+    "care": "Riego moderado, luz indirecta, temperatura ambiente.",
+    "characteristics": "Producto de alta calidad para plantas de interior. Resistente y duradero.",
+    "origin": "Cultivado en viveros especializados",
+    "featured": true
+  },
+  {
+    "id": "3",
+    "name": "Lavanda",
+    "description": "Lavanda de excelente calidad. Ideal para plantas con flores.",
+    "category_id": "2",
+    "price": 1200,
+    "stock": 12,
+    "image": "/placeholder.jpg",
+    "images": [
+      "/placeholder.jpg"
+    ],
+    "scientificName": "Lavandula angustifolia",
+    "care": "Riego moderado, luz indirecta, temperatura ambiente.",
+    "characteristics": "Producto de alta calidad para plantas con flores. Resistente y duradero.",
+    "origin": "Cultivado en viveros especializados",
+    "featured": true
+  },
+  {
+    "name": "planta deliciosa ",
+    "description": "",
+    "category_id": "3",
+    "price": 12,
+    "stock": 8,
+    "images": [
+      ""
+    ],
+    "scientificName": "",
+    "care": "",
+    "characteristics": "",
+    "origin": "",
+    "image": "",
+    "featured": true,
+    "id": "7pe8g8yhn"
+  },
+  {
+    "name": "plasticola",
+    "description": "",
+    "category_id": "8",
+    "price": 144,
+    "stock": 12,
+    "images": [
+      ""
+    ],
+    "scientificName": "",
+    "care": "",
+    "characteristics": "",
+    "origin": "",
+    "image": "",
+    "featured": true,
+    "id": "9jfvznkna"
+  }
+]
