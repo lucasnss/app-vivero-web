@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [returnUrl, setReturnUrl] = useState('/admin')
+  const [returnUrl, setReturnUrl] = useState<string | null>(null)
   
   const { login, isAuthenticated, isLoading, error, clearError } = useAuth()
   const router = useRouter()
@@ -25,16 +25,16 @@ export default function LoginPage() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
       const url = params.get('returnUrl')
-      if (url) {
-        setReturnUrl(url)
-      }
+      console.log('📍 Login - returnUrl desde query:', url)
+      setReturnUrl(url || '/admin')
     }
   }, [])
 
   // Redirigir si ya está autenticado
   useEffect(() => {
-    if (isAuthenticated && !isLoading) {
-      // Redirigir a donde el usuario quería ir originalmente
+    // Solo redirigir si returnUrl ya está configurado
+    if (isAuthenticated && !isLoading && returnUrl !== null) {
+      console.log('✅ Login - Usuario autenticado, redirigiendo a:', returnUrl)
       router.replace(returnUrl)
     }
   }, [isAuthenticated, isLoading, router, returnUrl])
@@ -59,27 +59,31 @@ export default function LoginPage() {
       const result = await login(email, password)
       
       if (result.success) {
+        const targetUrl = returnUrl || '/admin'
+        console.log('✅ Login exitoso, redirigiendo a:', targetUrl)
+        
         // Dar un pequeño tiempo para que el estado se actualice
         setTimeout(() => {
-          router.push(returnUrl)
+          router.push(targetUrl)
         }, 100)
         
         // Fallback: si no redirige en 2 segundos, forzar redirección
         setTimeout(() => {
           if (window.location.pathname === '/login') {
-            window.location.href = returnUrl
+            console.log('⚠️ Fallback redirect a:', targetUrl)
+            window.location.href = targetUrl
           }
         }, 2000)
       }
     } catch (error) {
-      console.error('Error durante el login:', error)
+      console.error('❌ Error durante el login:', error)
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  // Mostrar loading mientras se verifica la autenticación inicial
-  if (isLoading) {
+  // Mostrar loading mientras se verifica la autenticación inicial o esperando returnUrl
+  if (isLoading || returnUrl === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
         <div className="flex flex-col items-center gap-4">
@@ -90,9 +94,16 @@ export default function LoginPage() {
     )
   }
 
-  // No mostrar el formulario si ya está autenticado
+  // Si está autenticado, mostrar loading mientras redirige
   if (isAuthenticated) {
-    return null
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+          <p className="text-sm text-muted-foreground">Redirigiendo...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
