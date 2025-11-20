@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { getAllProducts, createProduct, updateProduct, deleteProduct, Product } from "@/lib/products"
 import { ArrowLeft, Plus, Package, TrendingUp, AlertTriangle, CheckCircle, Upload, Image as ImageIcon, User, LogOut, X, Home, TreePine, Shield } from "lucide-react"
@@ -39,6 +39,7 @@ const emptyProduct: Omit<Product, 'id'> = {
 export default function AdminPage() {
   const router = useRouter()
   const { user, isLoading: authLoading, logout } = useAuth()
+  const hasCheckedAuth = useRef(false)
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [showForm, setShowForm] = useState(false)
@@ -56,15 +57,21 @@ export default function AdminPage() {
 
   // Redirigir a login si no hay autenticación después de cargar
   useEffect(() => {
-    // ⏱️ Agregar delay para asegurar que authContext terminó de cargar
-    if (!authLoading && !user) {
-      // Dar 500ms extra para que termine de cargar el contexto
+    // Marcar que ya verificamos al menos una vez
+    if (!authLoading) {
+      hasCheckedAuth.current = true
+    }
+    
+    // ⏱️ Solo redirigir si YA verificamos Y no hay usuario
+    if (hasCheckedAuth.current && !authLoading && !user) {
+      // Dar 2000ms (2 segundos) para asegurar que el contexto terminó de cargar
+      // Esto evita el bucle infinito en conexiones lentas
       const timeoutId = setTimeout(() => {
         console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
         console.log('📊 Estado actual:', { authLoading, user: !!user })
         // ✅ Usar window.location.href en lugar de router.push() para producción
         window.location.href = '/login?returnUrl=/admin'
-      }, 500)
+      }, 2000) // Aumentado de 500ms a 2000ms
       
       return () => clearTimeout(timeoutId)
     }

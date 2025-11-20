@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { orderService } from '@/services/orderService'
@@ -88,20 +88,27 @@ export default function SalesHistoryPage() {
   const router = useRouter()
   const { user, isLoading: authLoading, logout } = useAuth()
   const { toast } = useToast()
+  const hasCheckedAuth = useRef(false)
   
   console.log('🔍 Component rendered with:', { user: !!user, authLoading, isLoading: undefined })
   
   // Redirigir a login si no hay autenticación después de cargar
   useEffect(() => {
-    // ⏱️ Agregar delay para asegurar que authContext terminó de cargar
-    if (!authLoading && !user) {
-      // Dar 500ms extra para que termine de cargar el contexto
+    // Marcar que ya verificamos al menos una vez
+    if (!authLoading) {
+      hasCheckedAuth.current = true
+    }
+    
+    // ⏱️ Solo redirigir si YA verificamos Y no hay usuario
+    if (hasCheckedAuth.current && !authLoading && !user) {
+      // Dar 2000ms (2 segundos) para asegurar que el contexto terminó de cargar
+      // Esto evita el bucle infinito en conexiones lentas
       const timeoutId = setTimeout(() => {
         console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
         console.log('📊 Estado actual:', { authLoading, user: !!user })
         // ✅ Usar window.location.href en lugar de router.push() para producción
         window.location.href = '/login?returnUrl=/admin/sales-history'
-      }, 500)
+      }, 2000) // Aumentado de 500ms a 2000ms
       
       return () => clearTimeout(timeoutId)
     }
