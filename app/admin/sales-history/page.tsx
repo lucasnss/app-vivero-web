@@ -93,11 +93,19 @@ export default function SalesHistoryPage() {
   
   // Redirigir a login si no hay autenticación después de cargar
   useEffect(() => {
+    // ⏱️ Agregar delay para asegurar que authContext terminó de cargar
     if (!authLoading && !user) {
-      console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
-      router.push('/login?returnUrl=/admin/sales-history')
+      // Dar 500ms extra para que termine de cargar el contexto
+      const timeoutId = setTimeout(() => {
+        console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
+        console.log('📊 Estado actual:', { authLoading, user: !!user })
+        // ✅ Usar window.location.href en lugar de router.push() para producción
+        window.location.href = '/login?returnUrl=/admin/sales-history'
+      }, 500)
+      
+      return () => clearTimeout(timeoutId)
     }
-  }, [authLoading, user, router])
+  }, [authLoading, user])
   
   const [orders, setOrders] = useState<ServiceOrder[]>([])
   const [filteredOrders, setFilteredOrders] = useState<ServiceOrder[]>([])

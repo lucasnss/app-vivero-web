@@ -35,9 +35,14 @@ export default function LoginPage() {
     // Solo redirigir si returnUrl ya está configurado
     if (isAuthenticated && !isLoading && returnUrl !== null) {
       console.log('✅ Login - Usuario autenticado, redirigiendo a:', returnUrl)
-      router.replace(returnUrl)
+      
+      // Forzar redirección inmediata con window.location
+      setTimeout(() => {
+        console.log('🚀 Ejecutando redirección a:', returnUrl)
+        window.location.href = returnUrl
+      }, 100)
     }
-  }, [isAuthenticated, isLoading, router, returnUrl])
+  }, [isAuthenticated, isLoading, returnUrl])
 
   // Limpiar errores cuando el usuario empiece a escribir
   useEffect(() => {

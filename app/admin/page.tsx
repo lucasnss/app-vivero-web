@@ -56,11 +56,19 @@ export default function AdminPage() {
 
   // Redirigir a login si no hay autenticación después de cargar
   useEffect(() => {
+    // ⏱️ Agregar delay para asegurar que authContext terminó de cargar
     if (!authLoading && !user) {
-      console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
-      router.push('/login?returnUrl=/admin')
+      // Dar 500ms extra para que termine de cargar el contexto
+      const timeoutId = setTimeout(() => {
+        console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
+        console.log('📊 Estado actual:', { authLoading, user: !!user })
+        // ✅ Usar window.location.href en lugar de router.push() para producción
+        window.location.href = '/login?returnUrl=/admin'
+      }, 500)
+      
+      return () => clearTimeout(timeoutId)
     }
-  }, [authLoading, user, router])
+  }, [authLoading, user])
 
   // Hook de gestión de imágenes
   const [imageState, imageActions] = useImageUpload({
