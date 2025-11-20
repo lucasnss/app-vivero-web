@@ -8,7 +8,6 @@ import { calculateOrderStats, toUiState, PaymentStatus, FulfillmentStatus, Shipp
 import { StatusBadge } from '@/components/StatusBadge'
 import { OrderDetailModal, OrderDetail } from '@/components/OrderDetailModal'
 import { OrderCompletionToggle } from '@/components/OrderCompletionToggle'
-import Navbar from '@/components/navbar'
 import { 
   Filter,
   Search,
@@ -406,9 +405,7 @@ export default function SalesHistoryPage() {
   // =============================================================================
 
   return (
-    <div>
-      <Navbar />
-      <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
@@ -802,7 +799,6 @@ export default function SalesHistoryPage() {
           loadOrders()
         }}
       />
-      </div>
     </div>
   )
 }

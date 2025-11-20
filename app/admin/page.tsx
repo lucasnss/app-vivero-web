@@ -6,7 +6,6 @@ import { ArrowLeft, Plus, Package, TrendingUp, AlertTriangle, CheckCircle, Uploa
 import { getAllCategories } from "@/lib/categories"
 import { Category } from "@/data/categories"
 import { useAuth } from "@/contexts/AuthContext"
-import Navbar from "@/components/navbar"
 import { useImageUpload } from "@/hooks/useImageUpload"
 import { AdvancedImageUploader } from "@/components/ui/ImageUploader"
 import { ImagePreview } from "@/components/ui/ImagePreview"
@@ -408,9 +407,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div>
-      <Navbar />
-      <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-8">
         {/* Notificación */}
         {notification && (
           <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
@@ -943,7 +940,6 @@ export default function AdminPage() {
             </div>
           </div>
         )}
-      </div>
     </div>
   )
 } 
