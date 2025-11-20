@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { adminAuthService } from './src/services/adminAuthService'
+import { jwtVerify } from 'jose'
+import { supabase } from './src/lib/supabaseClient'
 // Eliminado import de NextCors
 
-// Bandera para desarrollo - REMOVER EN PRODUCCIÓN
-const SKIP_AUTH_IN_DEV = process.env.NODE_ENV === 'development'
+// Bandera para desarrollo - DESACTIVADA PARA PRUEBAS
+const SKIP_AUTH_IN_DEV = false // process.env.NODE_ENV === 'development'
 
 // Rutas que requieren autenticación de admin
 const PROTECTED_ROUTES = [
@@ -116,10 +117,25 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    // Verificar token y obtener información del admin
-    const admin = await adminAuthService.getCurrentAdmin(token)
+    // Verificar token JWT usando jose (compatible con Edge Runtime)
+    const JWT_SECRET = process.env.JWT_SECRET || 'vivero-web-secret-key-development'
+    const secret = new TextEncoder().encode(JWT_SECRET)
     
-    if (!admin || !admin.is_active) {
+    const { payload } = await jwtVerify(token, secret)
+    
+    if (!payload.sub) {
+      throw new Error('Token inválido')
+    }
+
+    // Buscar admin en base de datos
+    const { data: admin, error: dbError } = await supabase
+      .from('admins')
+      .select('*')
+      .eq('id', payload.sub)
+      .eq('role', 'admin')
+      .single()
+
+    if (dbError || !admin || !admin.is_active) {
       // Para rutas de admin del frontend, redirigir al login con returnUrl
       if (pathname.startsWith('/admin')) {
         const loginUrl = new URL('/login', request.url)
@@ -149,7 +165,7 @@ export async function middleware(request: NextRequest) {
     response.headers.set('x-admin-id', admin.id)
     response.headers.set('x-admin-email', admin.email)
     response.headers.set('x-admin-role', admin.role)
-    response.headers.set('x-admin-name', admin.name || '')
+    response.headers.set('x-admin-name', admin.full_name || admin.email)
     response.headers.set('x-auth-method', cookieToken ? 'cookie' : 'header')
 
     // Mantener el token para compatibilidad con APIs que lo necesiten
