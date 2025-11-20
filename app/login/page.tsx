@@ -15,17 +15,29 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [returnUrl, setReturnUrl] = useState('/admin')
   
   const { login, isAuthenticated, isLoading, error, clearError } = useAuth()
   const router = useRouter()
+  
+  // Obtener la URL de retorno del query string (donde quería ir el usuario)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const url = params.get('returnUrl')
+      if (url) {
+        setReturnUrl(url)
+      }
+    }
+  }, [])
 
   // Redirigir si ya está autenticado
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
-      // Usar replace en lugar de push para evitar problemas de historial
-      router.replace('/admin')
+      // Redirigir a donde el usuario quería ir originalmente
+      router.replace(returnUrl)
     }
-  }, [isAuthenticated, isLoading, router])
+  }, [isAuthenticated, isLoading, router, returnUrl])
 
   // Limpiar errores cuando el usuario empiece a escribir
   useEffect(() => {
@@ -49,13 +61,13 @@ export default function LoginPage() {
       if (result.success) {
         // Dar un pequeño tiempo para que el estado se actualice
         setTimeout(() => {
-          router.push('/admin')
+          router.push(returnUrl)
         }, 100)
         
         // Fallback: si no redirige en 2 segundos, forzar redirección
         setTimeout(() => {
           if (window.location.pathname === '/login') {
-            window.location.href = '/admin'
+            window.location.href = returnUrl
           }
         }, 2000)
       }

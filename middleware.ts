@@ -92,9 +92,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!token) {
-    // Para rutas de admin del frontend, redirigir al login
+    // Para rutas de admin del frontend, redirigir al login con returnUrl
     if (pathname.startsWith('/admin')) {
-      return handleCorsResponse(request, NextResponse.redirect(new URL('/login', request.url)))
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('returnUrl', pathname)
+      return handleCorsResponse(request, NextResponse.redirect(loginUrl))
     }
     
     // Para APIs, devolver error JSON
@@ -118,9 +120,11 @@ export async function middleware(request: NextRequest) {
     const admin = await adminAuthService.getCurrentAdmin(token)
     
     if (!admin || !admin.is_active) {
-      // Para rutas de admin del frontend, redirigir al login
+      // Para rutas de admin del frontend, redirigir al login con returnUrl
       if (pathname.startsWith('/admin')) {
-        return handleCorsResponse(request, NextResponse.redirect(new URL('/login', request.url)))
+        const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set('returnUrl', pathname)
+        return handleCorsResponse(request, NextResponse.redirect(loginUrl))
       }
       
       const errorResponse = NextResponse.json(

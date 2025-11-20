@@ -1,11 +1,12 @@
 "use client"
 import { useEffect, useState, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { getAllProducts, createProduct, updateProduct, deleteProduct, Product } from "@/lib/products"
 import { ArrowLeft, Plus, Package, TrendingUp, AlertTriangle, CheckCircle, Upload, Image as ImageIcon, User, LogOut, X, Home, TreePine, Shield } from "lucide-react"
 import { getAllCategories } from "@/lib/categories"
 import { Category } from "@/data/categories"
-import { PrivateRoute } from "@/components/auth/PrivateRoute"
 import { useAuth } from "@/contexts/AuthContext"
+import Navbar from "@/components/navbar"
 import { useImageUpload } from "@/hooks/useImageUpload"
 import { AdvancedImageUploader } from "@/components/ui/ImageUploader"
 import { ImagePreview } from "@/components/ui/ImagePreview"
@@ -37,7 +38,8 @@ const emptyProduct: Omit<Product, 'id'> = {
 }
 
 export default function AdminPage() {
-  const { user, logout } = useAuth()
+  const router = useRouter()
+  const { user, isLoading: authLoading, logout } = useAuth()
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [showForm, setShowForm] = useState(false)
@@ -52,6 +54,14 @@ export default function AdminPage() {
   const [initialForm, setInitialForm] = useState<Omit<Product, 'id'>>(emptyProduct)
   const [isDeleting, setIsDeleting] = useState(false) // Estado para controlar si estamos eliminando una imagen
   const pageSize = 10
+
+  // Redirigir a login si no hay autenticación después de cargar
+  useEffect(() => {
+    if (!authLoading && !user) {
+      console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
+      router.push('/login?returnUrl=/admin')
+    }
+  }, [authLoading, user, router])
 
   // Hook de gestión de imágenes
   const [imageState, imageActions] = useImageUpload({
@@ -383,8 +393,23 @@ export default function AdminPage() {
   const outOfStockProducts = products.filter(p => p.stock === 0).length
   const totalValue = products.reduce((sum, p) => sum + (p.price * p.stock), 0)
 
+  // Mostrar loading mientras se verifica la autenticación
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+      </div>
+    )
+  }
+
+  // Si no está autenticado, no mostrar nada (el useEffect se encarga de redirigir)
+  if (!user) {
+    return null
+  }
+
   return (
-    <PrivateRoute requiredPermissions={['read_products', 'read_categories']}>
+    <div>
+      <Navbar />
       <div className="min-h-screen bg-gray-50 p-8">
         {/* Notificación */}
         {notification && (
@@ -919,6 +944,7 @@ export default function AdminPage() {
           </div>
         )}
       </div>
-    </PrivateRoute>
+      </div>
+    </div>
   )
 } 

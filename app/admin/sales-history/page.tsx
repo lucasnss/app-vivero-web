@@ -1,12 +1,14 @@
 "use client"
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { orderService } from '@/services/orderService'
 import { calculateOrderStats, toUiState, PaymentStatus, FulfillmentStatus, ShippingMethod } from '@/src/lib/orderStatus'
 import { StatusBadge } from '@/components/StatusBadge'
 import { OrderDetailModal, OrderDetail } from '@/components/OrderDetailModal'
 import { OrderCompletionToggle } from '@/components/OrderCompletionToggle'
+import Navbar from '@/components/navbar'
 import { 
   Filter,
   Search,
@@ -84,10 +86,19 @@ interface FilterOptions {
 // =============================================================================
 
 export default function SalesHistoryPage() {
+  const router = useRouter()
   const { user, isLoading: authLoading, logout } = useAuth()
   const { toast } = useToast()
   
   console.log('🔍 Component rendered with:', { user: !!user, authLoading, isLoading: undefined })
+  
+  // Redirigir a login si no hay autenticación después de cargar
+  useEffect(() => {
+    if (!authLoading && !user) {
+      console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
+      router.push('/login?returnUrl=/admin/sales-history')
+    }
+  }, [authLoading, user, router])
   
   const [orders, setOrders] = useState<ServiceOrder[]>([])
   const [filteredOrders, setFilteredOrders] = useState<ServiceOrder[]>([])
@@ -395,7 +406,9 @@ export default function SalesHistoryPage() {
   // =============================================================================
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
+      <Navbar />
+      <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
@@ -789,6 +802,7 @@ export default function SalesHistoryPage() {
           loadOrders()
         }}
       />
+      </div>
     </div>
   )
 }
