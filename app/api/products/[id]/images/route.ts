@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/src/lib/supabaseClient'
-import { auth } from '@/src/lib/auth'
+import { getAuthenticatedAdmin } from '@/src/lib/authMiddleware'
 import { ImagePreview } from '@/src/types/product'
 
 // Bucket de Supabase Storage
@@ -99,8 +99,8 @@ export async function POST(
 ) {
   try {
     // Verificar autenticación para actualización de imágenes
-    const session = await auth.getSession()
-    if (!session?.user) {
+    const admin = await getAuthenticatedAdmin(request)
+    if (!admin) {
       return NextResponse.json(
         { success: false, error: 'No autorizado' },
         { status: 401 }
@@ -206,7 +206,7 @@ export async function POST(
     })
 
     // Registrar actividad de actualización (opcional)
-    console.log(`✅ Imágenes actualizadas para producto ${productId} por ${session.user.email}`)
+    console.log(`✅ Imágenes actualizadas para producto ${productId} por ${admin.email}`)
 
     return NextResponse.json({
       success: true,
@@ -238,8 +238,8 @@ export async function DELETE(
 ) {
   try {
     // Verificar autenticación para eliminación de imágenes
-    const session = await auth.getSession()
-    if (!session?.user) {
+    const admin = await getAuthenticatedAdmin(request)
+    if (!admin) {
       return NextResponse.json(
         { success: false, error: 'No autorizado' },
         { status: 401 }
@@ -307,7 +307,7 @@ export async function DELETE(
         }
       } else {
         // Filtrar la imagen de las adicionales
-        updatedAdditionalImages = updatedAdditionalImages.filter(url => url !== imageUrl)
+        updatedAdditionalImages = updatedAdditionalImages.filter((url: string) => url !== imageUrl)
       }
     }
 
@@ -369,7 +369,7 @@ export async function DELETE(
     }
 
     // Registrar actividad de eliminación (opcional)
-    console.log(`✅ Imágenes actualizadas para producto ${productId} por ${session.user.email}`)
+    console.log(`✅ Imágenes actualizadas para producto ${productId} por ${admin.email}`)
 
     return NextResponse.json({
       success: true,

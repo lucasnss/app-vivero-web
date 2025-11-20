@@ -1,11 +1,13 @@
 "use client"
 
+import { Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { XCircle, ArrowLeft, RefreshCw } from 'lucide-react'
+import { XCircle, ArrowLeft, RefreshCw, Loader2 } from 'lucide-react'
 
-export default function PaymentFailurePage() {
+// Componente que usa useSearchParams
+function PaymentFailureContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -110,5 +112,32 @@ export default function PaymentFailurePage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+// Componente de fallback mientras se carga
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center">
+      <Card className="w-full max-w-md">
+        <CardContent className="pt-6">
+          <div className="flex flex-col items-center space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+            <p className="text-center text-gray-600">
+              Cargando información...
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+// Página principal con Suspense
+export default function PaymentFailurePage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <PaymentFailureContent />
+    </Suspense>
   )
 }
