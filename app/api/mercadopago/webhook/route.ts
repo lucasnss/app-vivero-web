@@ -5,6 +5,9 @@ import { logService } from '@/services/logService'
 import { WebhookNotification } from '@/types/order'
 import { supabase } from '@/lib/supabaseClient'
 
+// Forzar renderizado dinámico para evitar errores en producción con headers
+export const dynamic = "force-dynamic"
+
 // ✅ NUEVO: Cache en memoria para evitar procesar el mismo webhook dos veces
 // Las claves son payment_id, los valores son timestamps
 const processingCache = new Map<string, number>()

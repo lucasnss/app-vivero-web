@@ -4,6 +4,9 @@ import { adminAuthService } from '@/services/adminAuthService'
 import { handleServiceError, createSuccessResult, createErrorResult } from '@/lib/errorHandler'
 import { updateOrderSchema } from '@/lib/validations'
 
+// Forzar renderizado dinámico para evitar errores en producción con headers
+export const dynamic = "force-dynamic"
+
 // Helper para obtener el ID de la URL
 function getIdFromUrl(request: NextRequest): string {
   const segments = request.url.split('/')

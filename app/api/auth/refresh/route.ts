@@ -3,6 +3,9 @@ import { adminAuthService } from '@/services/adminAuthService'
 import { handleError, createSuccessResponse } from '@/lib/errorHandler'
 import jwt from 'jsonwebtoken'
 
+// Forzar renderizado dinámico para evitar errores en producción con cookies
+export const dynamic = "force-dynamic"
+
 export async function POST(request: NextRequest) {
   try {
     // Obtener el token actual de la cookie HttpOnly

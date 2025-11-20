@@ -5,6 +5,9 @@ import { handleServiceError, createSuccessResult, createErrorResult } from '@/li
 import { createOrderSchema, paginationSchema } from '@/lib/validations'
 import { OrdersResponse, GetOrdersOptions, OrderStatus } from '@/types/order'
 
+// Forzar renderizado dinámico para evitar errores en producción con headers
+export const dynamic = "force-dynamic"
+
 // GET - Obtener pedidos (solo admins autenticados)
 export async function GET(request: NextRequest) {
   try {

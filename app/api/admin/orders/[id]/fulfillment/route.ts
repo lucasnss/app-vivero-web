@@ -5,6 +5,9 @@ import { logService } from '@/services/logService'
 import { canChangeFulfillment } from '@/lib/orderStatus'
 import { z } from 'zod'
 
+// Forzar renderizado dinámico para evitar errores en producción con headers
+export const dynamic = "force-dynamic"
+
 // =============================================================================
 // 📋 VALIDACIONES
 // =============================================================================
