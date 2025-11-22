@@ -31,7 +31,7 @@ export default function Hero() {
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
               <img
-                src="/placeholder.svg?height=400&width=500"
+                src="/VIVERO EL OMBU.webp"
                 alt="Vivero El Ombú - Local físico"
                 className="rounded-2xl shadow-2xl w-full max-w-md lg:max-w-lg"
               />
