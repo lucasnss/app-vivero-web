@@ -6,8 +6,7 @@ import { ZodError } from 'zod'
 import { 
   productIdSchema,
   createProductSchema,
-  updateProductSchema,
-  bulkImportProductSchema
+  updateProductSchema
 } from '@/src/lib/validations'
 
 export const productService = {
@@ -417,11 +416,10 @@ export const productService = {
       throw new Error('El máximo de productos por operación bulk es 500')
     }
 
-    // Validar todos los productos antes de insertar usando schema permisivo para bulk import
+    // Validar todos los productos antes de insertar
     const validatedProducts = products.map((product, index) => {
       try {
-        // Usar bulkImportProductSchema que permite campos opcionales vacíos
-        const validatedData = bulkImportProductSchema.parse(product)
+        const validatedData = createProductSchema.parse(product)
         return validatedData
       } catch (error) {
         if (error instanceof ZodError) {
