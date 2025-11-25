@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,16 @@ import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
 import { ConfirmationDialog } from "@/components/confirmation-dialog"
 import { Product } from "@/lib/products"
+import { Category } from "@/types/category"
+import { getAllCategories } from "@/lib/categories"
+import { findCategoryByName } from "@/lib/categoryMatcher"
+import { 
+  ValidProductForBulk, 
+  ProductWithCategoryError, 
+  CategoryCorrection,
+  ParsedExcelProduct 
+} from "@/types/import-types"
+import { ProductCategoryErrorsDialog } from "@/components/product-category-errors-dialog"
 
 // Extensiones permitidas de Excel
 const allowedExtensions = ['.xlsx', '.xls']
@@ -44,6 +54,31 @@ export function ExcelUploadDialog({ isOpen, onClose, onDataProcessed }: ExcelUpl
   const editInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
 
+  // Nuevos estados para fuzzy matching
+  const [categories, setCategories] = useState<Category[]>([])
+  const [categoryErrors, setCategoryErrors] = useState<ProductWithCategoryError[]>([])
+  const [showErrorDialog, setShowErrorDialog] = useState(false)
+  const [validProductsCache, setValidProductsCache] = useState<ValidProductForBulk[]>([])
+
+  // Cargar categorías cuando el modal se abre
+  useEffect(() => {
+    if (isOpen) {
+      getAllCategories()
+        .then((cats) => {
+          setCategories(cats)
+        })
+        .catch((error) => {
+          console.error('Error cargando categorías:', error)
+          toast({
+            title: "Error",
+            description: "No se pudieron cargar las categorías",
+            variant: "destructive",
+            duration: 4000,
+          })
+        })
+    }
+  }, [isOpen, toast])
+
   // Validar archivo
   const validateFile = useCallback((file: File): FileValidation => {
     // Verificar tamaño del archivo (máximo 10MB)
@@ -71,7 +106,7 @@ export function ExcelUploadDialog({ isOpen, onClose, onDataProcessed }: ExcelUpl
     }
   }, [])
 
-  // Procesar archivo Excel
+  // Procesar archivo Excel con fuzzy matching de categorías
   const processExcelFile = useCallback(async (file: File) => {
     try {
       const data = await file.arrayBuffer()
@@ -100,12 +135,92 @@ export function ExcelUploadDialog({ isOpen, onClose, onDataProcessed }: ExcelUpl
       setPreviewData(jsonData.slice(0, 5)) // Mostrar solo las primeras 5 filas
       setCompleteData(jsonData) // Guardar datos completos
 
+      // Buscar columna de categoría (case insensitive)
+      const categoryKey = headers.find(h => 
+        h.toLowerCase() === 'category' || 
+        h.toLowerCase() === 'categoria' ||
+        h.toLowerCase() === 'categoría'
+      )
+
+      if (!categoryKey) {
+        throw new Error('El archivo debe contener una columna "category" o "categoria"')
+      }
+
+      // Procesar productos con fuzzy matching
+      const validProducts: ValidProductForBulk[] = []
+      const productsWithErrors: ProductWithCategoryError[] = []
+
+      jsonData.forEach((row: any, index: number) => {
+        const rowNumber = index + 2 // Fila en Excel (1 es header, así que +2)
+        const categoryName = String(row[categoryKey] || '').trim()
+
+        // Validar campos requeridos
+        if (!row.name || !categoryName || row.price === undefined) {
+          productsWithErrors.push({
+            rowNumber,
+            productName: row.name || `Fila ${rowNumber}`,
+            categoryNameProvided: categoryName || '(vacío)',
+            suggestions: [],
+            originalProduct: row as ParsedExcelProduct
+          })
+          return
+        }
+
+        // Hacer fuzzy matching
+        const matchResult = findCategoryByName(categoryName, categories)
+
+        if (matchResult.exactMatch) {
+          // Match exacto (≥85%) - agregar a productos válidos
+          const validProduct: ValidProductForBulk = {
+            name: String(row.name).trim(),
+            description: String(row.description || '').trim(),
+            category_id: matchResult.exactMatch.id,
+            price: Number(row.price),
+            stock: Number(row.stock || 0),
+            scientificName: String(row.scientificName || '').trim(),
+            care: String(row.care || '').trim(),
+            characteristics: String(row.characteristics || '').trim(),
+            origin: String(row.origin || '').trim(),
+            image: String(row.image || '/placeholder.svg').trim(),
+            images: row.images 
+              ? String(row.images).split(',').map(i => i.trim()) 
+              : [String(row.image || '/placeholder.svg').trim()],
+            featured: row.featured === true || row.featured === 'true' || row.featured === '1' || row.featured === 1 || false
+          }
+          validProducts.push(validProduct)
+        } else if (matchResult.suggestions.length > 0) {
+          // Sugerencias (60-84%) - agregar a errores con sugerencias
+          productsWithErrors.push({
+            rowNumber,
+            productName: String(row.name).trim(),
+            categoryNameProvided: categoryName,
+            suggestions: matchResult.suggestions,
+            originalProduct: row as ParsedExcelProduct
+          })
+        } else {
+          // Sin match (<60%) - agregar a errores sin sugerencias
+          productsWithErrors.push({
+            rowNumber,
+            productName: String(row.name).trim(),
+            categoryNameProvided: categoryName,
+            suggestions: [],
+            originalProduct: row as ParsedExcelProduct
+          })
+        }
+      })
+
+      // Guardar resultados en estados
+      setValidProductsCache(validProducts)
+      setCategoryErrors(productsWithErrors)
+
+      console.log(`Procesamiento completo: ${validProducts.length} válidos, ${productsWithErrors.length} con errores`)
+
       return jsonData
     } catch (error) {
       console.error("Error al procesar el archivo:", error)
-      throw new Error("Error al procesar el archivo Excel")
+      throw error instanceof Error ? error : new Error("Error al procesar el archivo Excel")
     }
-  }, [])
+  }, [categories])
 
   // Manejar archivos seleccionados
   const handleFileSelection = useCallback(async (files: FileList | null) => {
@@ -180,38 +295,157 @@ export function ExcelUploadDialog({ isOpen, onClose, onDataProcessed }: ExcelUpl
     setIsDragOver(false)
     setEditingCell(null)
     setEditValue("")
+    setCategoryErrors([])
+    setValidProductsCache([])
+    setShowErrorDialog(false)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }, [])
 
-  // Manejar importación
+  // Manejar importación con fuzzy matching
   const handleImportFile = useCallback(async () => {
     if (!selectedFile || !validationResult?.isValid || completeData.length === 0) return
+
+    // Si hay errores de categoría, mostrar el modal de corrección
+    if (categoryErrors.length > 0) {
+      setShowErrorDialog(true)
+      return
+    }
+
+    // Si no hay errores, importar directamente los productos válidos
+    if (validProductsCache.length === 0) {
+      toast({
+        title: "Sin productos válidos",
+        description: "No hay productos válidos para importar. Por favor, corrija los errores.",
+        variant: "destructive",
+        duration: 4000,
+      })
+      return
+    }
 
     setIsUploading(true)
 
     try {
-      await onDataProcessed(completeData)
-      
+      // Llamar al endpoint de bulk insert
+      const response = await fetch('/api/products/bulk', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(validProductsCache)
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error?.message || 'Error al importar productos')
+      }
+
       handleClearFile()
+      setCategoryErrors([])
+      setValidProductsCache([])
       onClose()
+      
       toast({
         title: "Importación exitosa",
-        description: "Los productos han sido importados correctamente.",
+        description: `Se importaron ${result.data.insertedCount} productos correctamente.`,
         duration: 4000,
       })
     } catch (error) {
+      console.error('Error en importación:', error)
       toast({
         title: "Error en la importación",
-        description: "Hubo un error al importar el archivo. Verifique el formato y vuelva a intentar.",
+        description: error instanceof Error ? error.message : "Hubo un error al importar el archivo.",
         variant: "destructive",
         duration: 4000,
       })
     } finally {
       setIsUploading(false)
     }
-  }, [selectedFile, validationResult, completeData, onDataProcessed, handleClearFile, onClose, toast])
+  }, [selectedFile, validationResult, completeData, categoryErrors, validProductsCache, handleClearFile, onClose, toast])
+
+  // Manejar corrección de errores e importación
+  const handleCorrectAndRetry = useCallback(async (corrections: CategoryCorrection[]) => {
+    try {
+      // Convertir correcciones a productos válidos
+      const correctedProducts: ValidProductForBulk[] = corrections.map(correction => {
+        const errorProduct = categoryErrors.find(e => e.rowNumber === correction.rowNumber)
+        if (!errorProduct) {
+          throw new Error(`No se encontró producto para fila ${correction.rowNumber}`)
+        }
+
+        const original = errorProduct.originalProduct
+        return {
+          name: String(original.name).trim(),
+          description: String(original.description || '').trim(),
+          category_id: correction.selectedCategoryId, // Categoría corregida
+          price: Number(original.price),
+          stock: Number(original.stock || 0),
+          scientificName: String(original.scientificName || '').trim(),
+          care: String(original.care || '').trim(),
+          characteristics: String(original.characteristics || '').trim(),
+          origin: String(original.origin || '').trim(),
+          image: String(original.image || '/placeholder.svg').trim(),
+          images: original.images 
+            ? String(original.images).split(',').map(i => i.trim()) 
+            : [String(original.image || '/placeholder.svg').trim()],
+          featured: original.featured === true || original.featured === 'true' || original.featured === '1' || original.featured === 1 || false
+        }
+      })
+
+      // Combinar productos válidos originales con productos corregidos
+      const allProducts = [...validProductsCache, ...correctedProducts]
+
+      if (allProducts.length === 0) {
+        toast({
+          title: "Sin productos",
+          description: "No hay productos para importar.",
+          variant: "destructive",
+          duration: 4000,
+        })
+        return
+      }
+
+      // Llamar al endpoint de bulk insert
+      const response = await fetch('/api/products/bulk', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(allProducts)
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error?.message || 'Error al importar productos')
+      }
+
+      // Limpiar todo y cerrar
+      handleClearFile()
+      setCategoryErrors([])
+      setValidProductsCache([])
+      setShowErrorDialog(false)
+      onClose()
+      
+      toast({
+        title: "Importación exitosa",
+        description: `Se importaron ${result.data.insertedCount} productos correctamente.`,
+        duration: 4000,
+      })
+    } catch (error) {
+      console.error('Error en importación con correcciones:', error)
+      toast({
+        title: "Error en la importación",
+        description: error instanceof Error ? error.message : "Hubo un error al importar los productos.",
+        variant: "destructive",
+        duration: 4000,
+      })
+    }
+  }, [categoryErrors, validProductsCache, handleClearFile, onClose, toast])
 
   // Cerrar el modal sin confirmación (para uso interno)
   const handleClose = useCallback(() => {
@@ -600,6 +834,15 @@ export function ExcelUploadDialog({ isOpen, onClose, onDataProcessed }: ExcelUpl
         confirmLabel="Cerrar"
         cancelLabel="Continuar"
         variant="destructive"
+      />
+
+      {/* Dialog de corrección de errores de categoría */}
+      <ProductCategoryErrorsDialog
+        isOpen={showErrorDialog}
+        onClose={() => setShowErrorDialog(false)}
+        productsWithErrors={categoryErrors}
+        allCategories={categories}
+        onCorrectAndImport={handleCorrectAndRetry}
       />
     </Dialog>
   )

@@ -36,6 +36,22 @@ export const createProductSchema = z.object({
 
 export const updateProductSchema = createProductSchema.partial()
 
+// Schema especial para bulk import: permite campos opcionales vacíos
+export const bulkImportProductSchema = z.object({
+  name: z.string().min(3).max(100),
+  description: z.string().max(1000).default(''), // Permitir vacío
+  category_id: z.string().uuid(),
+  price: z.number().positive(),
+  stock: z.number().int().min(0).default(0),
+  image: z.string().default('/placeholder.svg'),
+  images: z.array(z.string()).default([]),
+  scientificName: z.string().max(100).default(''), // Permitir vacío
+  care: z.string().max(1000).default(''), // Permitir vacío
+  characteristics: z.string().max(1000).default(''), // Permitir vacío
+  origin: z.string().max(100).default(''), // Permitir vacío
+  featured: z.boolean().default(false)
+})
+
 // Esquemas de validación para administradores
 export const createAdminSchema = z.object({
   email: z.string().email(),
