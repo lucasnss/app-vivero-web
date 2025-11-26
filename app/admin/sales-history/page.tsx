@@ -119,7 +119,7 @@ export default function SalesHistoryPage() {
   const [stats, setStats] = useState<OrderStats[]>([])
   const [isLoading, setOrdersLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
+  const pageSize = 20 // Tamaño de página para la paginación del frontend
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   
@@ -138,8 +138,7 @@ export default function SalesHistoryPage() {
     filteredOrdersLength: filteredOrders.length,
     statsLength: stats.length,
     isLoading,
-    currentPage,
-    totalPages
+    currentPage
   })
 
   // =============================================================================
@@ -158,7 +157,7 @@ export default function SalesHistoryPage() {
         reason: authLoading ? 'authLoading is true' : !user ? 'no user' : 'unknown'
       })
     }
-  }, [authLoading, user, currentPage])
+  }, [authLoading, user]) // Removido currentPage porque ahora cargamos todas las órdenes de una vez
 
   useEffect(() => {
     console.log('🔄 useEffect 2 - Orders or filters changed:', { ordersLength: orders.length, filters })
@@ -172,9 +171,12 @@ export default function SalesHistoryPage() {
     try {
       console.log('🚀 Starting to load orders...')
       setOrdersLoading(true)
+      // 🔁 IMPORTANTE: Cargar todas las órdenes de una vez para que el historial muestre
+      // el total real de órdenes en la BD, no solo las de la página actual.
+      // El límite alto (10000) permite obtener todas las órdenes sin restricciones.
       const response = await orderService.getAllOrders({
-        page: currentPage,
-        limit: 20, // Cambiado a 20 órdenes por página
+        page: 1,
+        limit: 10000, // Cargar todas las órdenes para mostrar el total real
         status: undefined,
         email: undefined
       })
@@ -207,9 +209,10 @@ export default function SalesHistoryPage() {
       });
       
       setOrders(typedOrders)
-      setTotalPages(response.pagination.totalPages)
+      // Ya no usamos totalPages de la API porque ahora cargamos todas las órdenes
+      // y paginamos en el frontend sobre las órdenes filtradas
       
-      // Calcular estadísticas
+      // Calcular estadísticas sobre TODAS las órdenes cargadas (no solo las de la página actual)
       const ordersForStats = typedOrders.map(order => ({
         payment_status: order.payment_status,
         fulfillment_status: order.fulfillment_status,
@@ -284,6 +287,8 @@ export default function SalesHistoryPage() {
 
     console.log('✅ Filters applied, filtered orders:', filtered.length)
     setFilteredOrders(filtered)
+    // Resetear a la primera página cuando se aplican filtros
+    setCurrentPage(1)
   }
 
   const clearFilters = () => {
@@ -612,7 +617,7 @@ export default function SalesHistoryPage() {
       <Card>
         <CardHeader>
           <CardTitle>
-            Órdenes ({filteredOrders.length} de {orders.length})
+            Órdenes ({orders.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -637,7 +642,9 @@ export default function SalesHistoryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredOrders.map((order) => (
+                  {filteredOrders
+                    .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                    .map((order) => (
                     <TableRow key={order.id}>
                       <TableCell>
                         <StatusBadge 
@@ -713,14 +720,21 @@ export default function SalesHistoryPage() {
       </Card>
 
       {/* Paginación Mejorada */}
-      {totalPages > 1 && (
+      {(() => {
+        const totalPages = Math.ceil(filteredOrders.length / pageSize)
+        const startIndex = (currentPage - 1) * pageSize + 1
+        const endIndex = Math.min(currentPage * pageSize, filteredOrders.length)
+        
+        if (totalPages <= 1) return null
+        
+        return (
         <Card className="mt-6">
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Información de páginas */}
               <div className="text-sm text-black">
-                Mostrando página {currentPage} de {totalPages} 
-                ({orders.length} órdenes de {orders.length * totalPages} total)
+                Mostrando {startIndex}-{endIndex} de {filteredOrders.length} órdenes
+                {filteredOrders.length !== orders.length && ` (${orders.length} total en BD)`}
               </div>
               
               {/* Navegación */}
@@ -802,7 +816,8 @@ export default function SalesHistoryPage() {
             </div>
           </CardContent>
         </Card>
-      )}
+        )
+      })()}
       
       {/* Modal de detalle de orden */}
       <OrderDetailModal 

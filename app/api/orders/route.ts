@@ -25,7 +25,10 @@ export async function GET(request: NextRequest) {
     // Obtener parámetros de query
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '20')
+    // 🔁 IMPORTANTE: Aumentamos el límite por defecto para que el historial del admin
+    // pueda mostrar todas las órdenes. El panel de administración necesita ver
+    // el total real de órdenes en la BD, no solo las primeras 20.
+    const limit = parseInt(searchParams.get('limit') || '10000')
     const status = searchParams.get('status') as OrderStatus | undefined
 
     // Validar parámetros de paginación

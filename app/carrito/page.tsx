@@ -183,21 +183,26 @@ export default function CarritoPage() {
 
               {/* Total y checkout */}
               <div className="bg-green-50 p-6">
-                <div className="flex items-center mb-4">
-                  <input
-                    id="envioDomicilio"
-                    type="checkbox"
-                    checked={envioDomicilio}
-                    onChange={() => setEnvioDomicilio(!envioDomicilio)}
-                    className="mr-2"
-                  />
-                  <label htmlFor="envioDomicilio" className="text-green-800 font-medium cursor-pointer">
-                    Envío a domicilio (+$2000)
-                  </label>
+                <div className="flex items-center mb-4 justify-between">
+                  <div className="flex items-center">
+                    <input
+                      id="envioDomicilio"
+                      type="checkbox"
+                      checked={envioDomicilio}
+                      onChange={() => setEnvioDomicilio(!envioDomicilio)}
+                      className="mr-2"
+                    />
+                    <label htmlFor="envioDomicilio" className="text-green-800 font-medium cursor-pointer">
+                      Envío a domicilio
+                    </label>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm text-green-700"> (Costo variable)</span>
+                  </div>
                 </div>
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-lg font-semibold text-green-800">Total:</span>
-                  <span className="text-2xl font-bold text-green-700">${envioDomicilio ? total + 2000 : total}</span>
+                  <span className="text-2xl font-bold text-green-700">${total}</span>
                 </div>
                 <div className="flex justify-between gap-4">
                   <button
