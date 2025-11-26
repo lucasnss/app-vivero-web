@@ -48,6 +48,12 @@
 - [ ] Implementar rate limiting completo en `app/api/images/route.ts`
 - [ ] Implementar función `updateProductImages` en `ImageService`
 
+#### Detalle de próximas tareas relacionadas con administración de productos
+- [ ] Revisar nuevamente la paginación del panel de administrador después del próximo build para validar que:
+  - [ ] Se listan todos los productos existentes en la base de datos (sin corte en 20).
+  - [ ] El número de páginas en el panel se ajusta de forma dinámica según la cantidad total de productos.
+  - [ ] Los filtros de búsqueda y categoría siguen funcionando correctamente con el nuevo volumen de datos.
+
 ### 📊 FASE 4: MONITOREO
 - [ ] Configurar logging y monitoreo en producción
 - [ ] Implementar alertas para errores críticos

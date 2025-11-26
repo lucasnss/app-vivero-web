@@ -7,6 +7,14 @@
 - **Optimización: Envolver useSearchParams() en Suspense** - Mejorado rendimiento en páginas de pago
 - **Build exitoso para deploy** - Proyecto compilado sin errores críticos
 
+### 🔁 Mejora adicional (Paginación panel administrador)
+- **Archivo**: `app/api/products/route.ts`
+  - Cambio: Límite por defecto de paginación `limit` pasado de `20` a `10000` para que las peticiones sin `limit` (como el panel de administrador) reciban todos los productos disponibles.
+  - Efecto: El panel de administrador ahora puede ver el total de productos, y su propia paginación de frontend se ajusta correctamente al número real de productos.
+- **Archivo**: `lib/validations.ts`
+  - Cambio: `paginationSchema.limit` actualizado de `max(100)` a `max(10000)` para aceptar límites mayores sin invalidar la petición.
+  - Efecto: Se evita que la validación corte artificialmente la cantidad máxima de productos que pueden devolverse en una sola respuesta.
+
 ### 🔧 Correcciones Implementadas
 
 #### 1. Corregir imports en rutas API de imágenes

@@ -28,7 +28,12 @@ function extractQueryParams(url: string) {
     
     // Paginación
     page: parseInt(searchParams.get('page') || '1'),
-    limit: parseInt(searchParams.get('limit') || '20'),
+    // 🔁 IMPORTANTE:
+    // - El panel de administración necesita ver **todos** los productos para paginar del lado del cliente.
+    // - Antes el límite por defecto era 20, lo que hacía que la API cortara los resultados.
+    // - Aumentamos el límite por defecto a 10000 para que, si no se especifica `limit`,
+    //   se devuelvan todos los productos (hasta ese máximo razonable).
+    limit: parseInt(searchParams.get('limit') || '10000'),
     
     // Filtros avanzados
     minPrice: searchParams.get('min_price') ? parseFloat(searchParams.get('min_price')!) : undefined,

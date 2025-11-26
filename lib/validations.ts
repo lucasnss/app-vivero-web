@@ -86,7 +86,9 @@ export const searchQuerySchema = z.string().min(2).max(100)
 
 export const paginationSchema = z.object({
   page: z.number().int().positive(),
-  limit: z.number().int().min(1).max(100)
+  // Aumentamos el máximo permitido para soportar listados grandes (ej. panel de administración de productos)
+  // sin cortar los resultados en 20/100 elementos.
+  limit: z.number().int().min(1).max(10000)
 })
 
 export const priceRangeSchema = z.object({
