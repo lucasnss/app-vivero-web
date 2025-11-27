@@ -98,9 +98,8 @@ export default function PagoPage() {
     fetchProducts()
   }, [cartItems])
 
-  const envioCosto = 2000
   const totalProductos = cartService.calculateCartTotal(cartItems)
-  const total = envioDomicilio ? totalProductos + envioCosto : totalProductos
+  const total = totalProductos
 
   const handleEnvioChange = () => {
     setEnvioDomicilio((prev) => {
@@ -407,7 +406,7 @@ export default function PagoPage() {
                           className="mr-2"
                         />
                         <span className="text-green-700">
-                          Envío a domicilio (+${envioCosto})
+                          Envío a domicilio
                         </span>
                       </label>
                     </div>

@@ -1,10 +1,10 @@
 "use client"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
+import { useRouter } from "next/navigation"
 import { getAllProducts, createProduct, updateProduct, deleteProduct, Product } from "@/lib/products"
 import { ArrowLeft, Plus, Package, TrendingUp, AlertTriangle, CheckCircle, Upload, Image as ImageIcon, User, LogOut, X, Home, TreePine, Shield } from "lucide-react"
 import { getAllCategories } from "@/lib/categories"
 import { Category } from "@/data/categories"
-import { PrivateRoute } from "@/components/auth/PrivateRoute"
 import { useAuth } from "@/contexts/AuthContext"
 import { useImageUpload } from "@/hooks/useImageUpload"
 import { AdvancedImageUploader } from "@/components/ui/ImageUploader"
@@ -18,6 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ExcelUploadDialog } from "@/components/excel-upload-dialog"
 
 const PLACEHOLDER_IMAGE = '/placeholder.jpg';
 
@@ -37,7 +38,9 @@ const emptyProduct: Omit<Product, 'id'> = {
 }
 
 export default function AdminPage() {
-  const { user, logout } = useAuth()
+  const router = useRouter()
+  const { user, isLoading: authLoading, logout } = useAuth()
+  const hasCheckedAuth = useRef(false)
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [showForm, setShowForm] = useState(false)
@@ -51,7 +54,30 @@ export default function AdminPage() {
   const [formChanged, setFormChanged] = useState(false)
   const [initialForm, setInitialForm] = useState<Omit<Product, 'id'>>(emptyProduct)
   const [isDeleting, setIsDeleting] = useState(false) // Estado para controlar si estamos eliminando una imagen
+  const [showExcelUpload, setShowExcelUpload] = useState(false) // Estado para controlar el modal de importación
   const pageSize = 10
+
+  // Redirigir a login si no hay autenticación después de cargar
+  useEffect(() => {
+    // Marcar que ya verificamos al menos una vez
+    if (!authLoading) {
+      hasCheckedAuth.current = true
+    }
+    
+    // ⏱️ Solo redirigir si YA verificamos Y no hay usuario
+    if (hasCheckedAuth.current && !authLoading && !user) {
+      // Dar 2000ms (2 segundos) para asegurar que el contexto terminó de cargar
+      // Esto evita el bucle infinito en conexiones lentas
+      const timeoutId = setTimeout(() => {
+        console.log('🔄 Redirigiendo a login porque no hay usuario autenticado')
+        console.log('📊 Estado actual:', { authLoading, user: !!user })
+        // ✅ Usar window.location.href en lugar de router.push() para producción
+        window.location.href = '/login?returnUrl=/admin'
+      }, 2000) // Aumentado de 500ms a 2000ms
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [authLoading, user])
 
   // Hook de gestión de imágenes
   const [imageState, imageActions] = useImageUpload({
@@ -364,6 +390,84 @@ export default function AdminPage() {
     window.location.href = '/'
   }
 
+  // Manejar importación de productos desde Excel (VERSIÓN OPTIMIZADA - EN PARALELO)
+  const handleExcelDataProcessed = async (data: Partial<Product>[]) => {
+    try {
+      console.log(`🚀 Iniciando importación de ${data.length} productos en paralelo...`)
+      
+      // Transformar datos a formato Product
+      const productsToCreate: Omit<Product, 'id'>[] = data.map((productData) => ({
+        // Campos obligatorios
+        name: String(productData.name || ''),
+        price: Number(productData.price || 0),
+        
+        // Campos opcionales con valores por defecto
+        description: productData.description ? String(productData.description) : '',
+        category_id: productData.category_id ? String(productData.category_id) : '',
+        stock: productData.stock !== undefined ? Number(productData.stock) : 0, // Default 0
+        scientificName: productData.scientificName ? String(productData.scientificName) : '',
+        care: productData.care ? String(productData.care) : '',
+        characteristics: productData.characteristics ? String(productData.characteristics) : '',
+        origin: productData.origin ? String(productData.origin) : '',
+        image: productData.image ? String(productData.image) : '',
+        images: productData.images 
+          ? (typeof productData.images === 'string' 
+              ? String(productData.images).split(',').map(url => url.trim()).filter(url => url)
+              : Array.isArray(productData.images) 
+                ? productData.images 
+                : [])
+          : [],
+        featured: (() => {
+          const featured = productData.featured
+          if (featured === true) return true
+          if (!featured) return false
+          const featuredStr = String(featured).toLowerCase()
+          return featuredStr === 'true' || featuredStr === '1' || 
+                 featuredStr === 'sí' || featuredStr === 'si' || featuredStr === 'yes'
+        })()
+      }))
+
+      // Importar todos los productos EN PARALELO usando Promise.allSettled
+      const promises = productsToCreate.map((productData, index) => 
+        createProduct(productData)
+          .then(() => ({ success: true, index, name: productData.name }))
+          .catch((error) => ({ 
+            success: false, 
+            index, 
+            name: productData.name,
+            error: error instanceof Error ? error.message : 'Error desconocido'
+          }))
+      )
+
+      // Esperar a que TODAS las promesas se resuelvan (exitosas o con error)
+      const results = await Promise.all(promises)
+
+      // Contar éxitos y errores
+      const successCount = results.filter(r => r.success).length
+      const errors = results.filter(r => !r.success)
+
+      console.log(`✅ Importación completada: ${successCount} éxitos, ${errors.length} errores`)
+
+      // Refrescar la lista de productos
+      await fetchData()
+
+      // Mostrar resultado
+      if (successCount > 0 && errors.length === 0) {
+        showNotification('success', `✅ ${successCount} producto${successCount !== 1 ? 's' : ''} importado${successCount !== 1 ? 's' : ''} exitosamente`)
+      } else if (successCount > 0 && errors.length > 0) {
+        showNotification('success', `⚠️ ${successCount} producto${successCount !== 1 ? 's' : ''} importado${successCount !== 1 ? 's' : ''}. ${errors.length} error${errors.length !== 1 ? 'es' : ''}`)
+        console.error('❌ Errores durante la importación:', errors)
+      } else {
+        showNotification('error', `❌ Error al importar productos. ${errors.length} error${errors.length !== 1 ? 'es' : ''}`)
+        console.error('❌ Errores durante la importación:', errors)
+      }
+    } catch (error) {
+      console.error('❌ Error general en la importación:', error)
+      showNotification('error', 'Error al procesar el archivo de importación')
+      throw error
+    }
+  }
+
   // Filtrar productos
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -383,9 +487,22 @@ export default function AdminPage() {
   const outOfStockProducts = products.filter(p => p.stock === 0).length
   const totalValue = products.reduce((sum, p) => sum + (p.price * p.stock), 0)
 
+  // Mostrar loading mientras se verifica la autenticación
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-600"></div>
+      </div>
+    )
+  }
+
+  // Si no está autenticado, no mostrar nada (el useEffect se encarga de redirigir)
+  if (!user) {
+    return null
+  }
+
   return (
-    <PrivateRoute requiredPermissions={['read_products', 'read_categories']}>
-      <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-8">
         {/* Notificación */}
         {notification && (
           <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
@@ -510,13 +627,22 @@ export default function AdminPage() {
               </select>
             </div>
             
-            <button
-              onClick={openAdd}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded flex items-center"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Producto
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowExcelUpload(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded flex items-center"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Importar desde Excel
+              </button>
+              <button
+                onClick={openAdd}
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded flex items-center"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Agregar Producto
+              </button>
+            </div>
           </div>
         </div>
 
@@ -918,7 +1044,13 @@ export default function AdminPage() {
             </div>
           </div>
         )}
-      </div>
-    </PrivateRoute>
+
+        {/* Modal de importación de Excel */}
+        <ExcelUploadDialog
+          isOpen={showExcelUpload}
+          onClose={() => setShowExcelUpload(false)}
+          onDataProcessed={handleExcelDataProcessed}
+        />
+    </div>
   )
 } 

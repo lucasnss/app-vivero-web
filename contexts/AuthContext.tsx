@@ -47,16 +47,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Función para verificar la sesión actual
   const checkAuthStatus = async (): Promise<{ isAuthenticated: boolean; user?: AdminUser }> => {
     try {
+      console.log('🔍 [checkAuthStatus] Verificando sesión...')
+      
       const response = await fetch('/api/auth/me', {
         method: 'GET',
         credentials: 'include', // Importante para enviar cookies
         headers: {
           'Content-Type': 'application/json',
         },
+        // Agregar timeout para evitar bloqueos en producción
+        signal: AbortSignal.timeout(10000) // 10 segundos timeout
+      })
+
+      console.log('📡 [checkAuthStatus] Respuesta recibida:', {
+        status: response.status,
+        ok: response.ok,
+        statusText: response.statusText
       })
 
       if (response.ok) {
         const result = await response.json()
+        console.log('✅ [checkAuthStatus] Datos parseados:', {
+          success: result.success,
+          hasAdmin: !!result.data?.admin,
+          adminEmail: result.data?.admin?.email
+        })
+        
         if (result.success && result.data?.admin) {
           return {
             isAuthenticated: true,
@@ -65,9 +81,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }
 
+      console.log('⚠️ [checkAuthStatus] No autenticado')
       return { isAuthenticated: false }
     } catch (error) {
-      console.error('Error verificando estado de autenticación:', error)
+      console.error('❌ [checkAuthStatus] Error verificando autenticación:', error)
       return { isAuthenticated: false }
     }
   }
@@ -190,14 +207,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Verificar autenticación al montar el componente
   useEffect(() => {
     const initializeAuth = async () => {
-      const authStatus = await checkAuthStatus()
-      
-      setAuthState({
-        isAuthenticated: authStatus.isAuthenticated,
-        isLoading: false,
-        user: authStatus.user || null,
-        error: null
-      })
+      try {
+        console.log('🔐 [AuthContext] Iniciando verificación de autenticación...')
+        const authStatus = await checkAuthStatus()
+        
+        console.log('✅ [AuthContext] Verificación completada:', {
+          isAuthenticated: authStatus.isAuthenticated,
+          hasUser: !!authStatus.user,
+          userEmail: authStatus.user?.email
+        })
+        
+        setAuthState({
+          isAuthenticated: authStatus.isAuthenticated,
+          isLoading: false,
+          user: authStatus.user || null,
+          error: null
+        })
+      } catch (error) {
+        console.error('❌ [AuthContext] Error inicializando auth:', error)
+        setAuthState({
+          isAuthenticated: false,
+          isLoading: false,
+          user: null,
+          error: 'Error al verificar autenticación'
+        })
+      }
     }
 
     initializeAuth()

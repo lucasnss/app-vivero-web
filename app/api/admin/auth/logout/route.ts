@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { adminAuthService } from '@/services/adminAuthService'
 import { handleError, createSuccessResponse } from '@/lib/errorHandler'
 
+// Forzar renderizado dinámico para evitar errores en producción con headers
+export const dynamic = "force-dynamic"
+
 export async function POST(request: NextRequest) {
   try {
     // Obtener el token del header Authorization

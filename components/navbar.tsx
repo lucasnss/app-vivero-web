@@ -151,11 +151,11 @@ export default function Navbar({ onlyBackButton = false, prevUrl }: { onlyBackBu
                   <DropdownMenuSeparator />
                   {isAdmin() && (
                     <>
-                      <DropdownMenuItem onClick={() => router.push('/admin/sales-history')}>
+                      <DropdownMenuItem onClick={() => window.location.href = '/admin/sales-history'}>
                         <TreePine className="h-4 w-4 mr-2" />
                         Historial
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => router.push('/admin')}>
+                      <DropdownMenuItem onClick={() => window.location.href = '/admin'}>
                         <Shield className="h-4 w-4 mr-2" />
                         Panel de Administrador
                       </DropdownMenuItem>

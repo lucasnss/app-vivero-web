@@ -1,10 +1,8 @@
-import { PaymentStatus, FulfillmentStatus, ShippingMethod } from '../src/lib/orderStatus';
-
 // Extender la interfaz Order para incluir las propiedades faltantes
-declare module '@/types/order' {
+// NOTA: shipping_method y fulfillment_status ya están definidos en src/types/order.ts
+// Solo agregamos admin_notes aquí
+declare module '@/src/types/order' {
   interface Order {
-    shipping_method: ShippingMethod;
-    fulfillment_status: FulfillmentStatus;
     admin_notes?: string;
   }
 }

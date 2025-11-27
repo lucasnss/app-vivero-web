@@ -1,3 +1,4 @@
+Ultima prueba de cambio de cuenta de git. . . . . . . .
 # 📋 Tasks - ViveroWeb
 
 ## Estado General
@@ -48,6 +49,24 @@
 - [ ] Implementar rate limiting completo en `app/api/images/route.ts`
 - [ ] Implementar función `updateProductImages` en `ImageService`
 
+#### Detalle de próximas tareas relacionadas con administración de productos
+- [x] **Corregir paginación del panel de administrador de productos**
+  - [x] Aumentar límite por defecto en API de productos de 20 a 10000
+  - [x] Actualizar validación de paginación para aceptar límites mayores
+  - [x] Verificar que se muestren todos los productos de la BD
+
+- [x] **Corregir paginación del historial de órdenes del admin**
+  - [x] Aumentar límite por defecto en API de órdenes de 20 a 10000
+  - [x] Modificar frontend para cargar todas las órdenes de una vez
+  - [x] Implementar paginación del lado del cliente sobre órdenes filtradas
+  - [x] Ajustar estadísticas para calcularse sobre todas las órdenes cargadas
+
+- [ ] Revisar nuevamente la paginación del panel de administrador después del próximo build para validar que:
+  - [ ] Se listan todos los productos existentes en la base de datos (sin corte en 20).
+  - [ ] El número de páginas en el panel se ajusta de forma dinámica según la cantidad total de productos.
+  - [ ] Los filtros de búsqueda y categoría siguen funcionando correctamente con el nuevo volumen de datos.
+  - [ ] El historial de órdenes muestra todas las órdenes de la BD y la paginación funciona correctamente.
+
 ### 📊 FASE 4: MONITOREO
 - [ ] Configurar logging y monitoreo en producción
 - [ ] Implementar alertas para errores críticos
@@ -66,6 +85,12 @@
 - `app/pago/success/page.tsx` - Refactorización con Suspense
 - `app/pago/pending/page.tsx` - Refactorización con Suspense
 - `app/pago/failure/page.tsx` - Refactorización con Suspense
+
+### Correcciones de Paginación
+- `app/api/products/route.ts` - Límite por defecto aumentado a 10000
+- `app/api/orders/route.ts` - Límite por defecto aumentado a 10000
+- `app/admin/sales-history/page.tsx` - Paginación del lado del cliente implementada
+- `lib/validations.ts` - Validación de paginación actualizada para límites mayores
 
 ### Documentación Actualizada
 - `CHANGELOG.md` - Registrado release 2.0.0
@@ -135,6 +160,7 @@ O deployar directamente a Vercel/servicio de hosting.
 **Última revisión**: 2025-11-20
 **Revisado por**: Sistema de Asistencia
 
+<<<<<<< HEAD
 
 
 --------------------------------------------------------------------------------------------------------
@@ -1380,3 +1406,6 @@ Ahora:  Carrito → Pago           (2 pasos)
 ---
 
 Actualizar este archivo conforme se vayan completando las tareas
+=======
+cambio de cuenta
+>>>>>>> main

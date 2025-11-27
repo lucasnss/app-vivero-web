@@ -400,5 +400,95 @@ export const productService = {
     })
     
     return true
+  },
+
+  /**
+   * Crea múltiples productos en una sola operación (bulk insert)
+   * @param products - Array de productos a crear (máximo 500)
+   * @returns Array de productos creados
+   */
+  async bulkCreateProducts(products: CreateProductRequest[]): Promise<Product[]> {
+    if (!products || products.length === 0) {
+      throw new Error('No hay productos para crear')
+    }
+
+    if (products.length > 500) {
+      throw new Error('El máximo de productos por operación bulk es 500')
+    }
+
+    // Validar todos los productos antes de insertar
+    const validatedProducts = products.map((product, index) => {
+      try {
+        const validatedData = createProductSchema.parse(product)
+        return validatedData
+      } catch (error) {
+        if (error instanceof ZodError) {
+          const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+          throw new Error(`Error de validación en producto ${index + 1}: ${messages}`)
+        }
+        throw new Error(`Error de validación en producto ${index + 1}`)
+      }
+    })
+
+    // Preparar datos para Supabase (mapear todos los productos)
+    const supabaseData = validatedProducts.map(product => ({
+      name: product.name,
+      description: product.description,
+      category_id: product.category_id,
+      price: product.price,
+      stock: product.stock,
+      image: product.image || '/placeholder.svg',
+      images: product.images || [],
+      scientific_name: product.scientificName,
+      care: product.care,
+      characteristics: product.characteristics,
+      origin: product.origin,
+      featured: product.featured || false
+    }))
+
+    // Insertar todos los productos en UNA SOLA consulta
+    const { data, error } = await supabase
+      .from('products')
+      .insert(supabaseData)
+      .select()
+
+    if (error) {
+      console.error('Error en bulk insert de productos:', error)
+      throw new Error('Error al crear productos: ' + error.message)
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error('No se crearon productos')
+    }
+
+    // Mapear respuesta
+    const createdProducts: Product[] = data.map(item => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      category_id: item.category_id,
+      price: item.price,
+      stock: item.stock,
+      image: item.image,
+      images: item.images || [],
+      scientificName: item.scientific_name,
+      care: item.care,
+      characteristics: item.characteristics,
+      origin: item.origin,
+      featured: item.featured
+    }))
+
+    // Log de actividad para el bulk
+    await logService.recordActivity({
+      action: 'products_bulk_created',
+      entity_type: 'product',
+      entity_id: 'bulk_import',
+      details: { 
+        count: createdProducts.length,
+        productIds: createdProducts.map(p => p.id)
+      }
+    })
+
+    return createdProducts
   }
 } 

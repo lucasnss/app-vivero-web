@@ -14,7 +14,7 @@ export interface Order {
   customer_email: string
   customer_name: string
   customer_phone: string
-  
+
   // Campos de Mercado Pago
   payment_id?: string
   comprobante_url?: string
@@ -26,16 +26,33 @@ export interface Order {
   payment_type?: string
   merchant_order_id?: string
   external_reference?: string
-  
+
   // Tipo de pago (test o real)
   payment_source?: 'real' | 'test'
+
+  // Campos de logística y fulfillment
+  shipping_method?: 'pickup' | 'delivery'
+  fulfillment_status?: FulfillmentStatus
+
+  // Campos duplicados para compatibilidad (también están en shipping_address)
+  state?: string
+  zip?: string
 }
 
-export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
 
 export type PaymentMethod = 'cash' | 'transfer' | 'card' | 'mercadopago'
 
-export type PaymentStatus = 
+export type FulfillmentStatus =
+  | 'none'                   // Sin estado de fulfillment
+  | 'awaiting_shipment'      // Esperando envío
+  | 'awaiting_pickup'        // Esperando retiro
+  | 'shipped'                // Enviado
+  | 'delivered'              // Entregado
+  | 'pickup_completed'       // Retiro completado
+  | 'cancelled_by_admin'     // Cancelado por admin
+
+export type PaymentStatus =
   | 'pending'     // Pago pendiente
   | 'approved'    // Pago aprobado
   | 'rejected'    // Pago rechazado
@@ -44,7 +61,7 @@ export type PaymentStatus =
   | 'authorized'  // Pago autorizado (para tarjetas)
   | 'refunded'    // Pago reembolsado
 
-export type MercadoPagoPaymentType = 
+export type MercadoPagoPaymentType =
   | 'credit_card'   // Tarjeta de crédito
   | 'debit_card'    // Tarjeta de débito
   | 'ticket'        // Cupón de pago (Rapipago, Pago Fácil)
@@ -126,13 +143,13 @@ export interface MercadoPagoPaymentInfo {
   transaction_amount: number
   net_received_amount?: number
   total_paid_amount?: number
-  
+
   // Para métodos offline
   ticket_url?: string
-  
+
   // Para tarjetas
   authorization_code?: string
-  
+
   // Información adicional
   external_reference?: string
   merchant_order_id?: string
@@ -200,4 +217,4 @@ export interface WebhookNotification {
   data: {
     id: string
   }
-} 
+}

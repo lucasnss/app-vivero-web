@@ -7,6 +7,29 @@
 - **Optimización: Envolver useSearchParams() en Suspense** - Mejorado rendimiento en páginas de pago
 - **Build exitoso para deploy** - Proyecto compilado sin errores críticos
 
+### 🔁 Mejoras de Paginación (Panel Administrador)
+
+#### Paginación de Productos
+- **Archivo**: `app/api/products/route.ts`
+  - Cambio: Límite por defecto de paginación `limit` pasado de `20` a `10000` para que las peticiones sin `limit` (como el panel de administrador) reciban todos los productos disponibles.
+  - Efecto: El panel de administrador ahora puede ver el total de productos, y su propia paginación de frontend se ajusta correctamente al número real de productos.
+
+#### Paginación de Órdenes (Historial de Ventas)
+- **Archivo**: `app/api/orders/route.ts`
+  - Cambio: Límite por defecto de paginación `limit` pasado de `20` a `10000` para que el historial de órdenes pueda cargar todas las órdenes de la BD.
+  - Efecto: El historial de ventas ahora muestra todas las órdenes existentes, no solo las primeras 20.
+
+- **Archivo**: `app/admin/sales-history/page.tsx`
+  - Cambio: Modificado para cargar todas las órdenes de una vez (limit: 10000) en lugar de paginar desde la API.
+  - Cambio: Implementada paginación del lado del cliente sobre las órdenes filtradas (20 órdenes por página).
+  - Cambio: Estadísticas ahora se calculan sobre todas las órdenes cargadas, no solo las de la página actual.
+  - Cambio: Removida dependencia de `currentPage` en el useEffect de carga de órdenes.
+  - Efecto: El historial muestra el total real de órdenes en la BD, y la paginación funciona correctamente sobre los datos filtrados.
+
+- **Archivo**: `lib/validations.ts`
+  - Cambio: `paginationSchema.limit` actualizado de `max(100)` a `max(10000)` para aceptar límites mayores sin invalidar la petición.
+  - Efecto: Se evita que la validación corte artificialmente la cantidad máxima de productos/órdenes que pueden devolverse en una sola respuesta.
+
 ### 🔧 Correcciones Implementadas
 
 #### 1. Corregir imports en rutas API de imágenes
