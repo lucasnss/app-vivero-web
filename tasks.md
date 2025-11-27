@@ -159,3 +159,4 @@ O deployar directamente a Vercel/servicio de hosting.
 **Última revisión**: 2025-11-20
 **Revisado por**: Sistema de Asistencia
 
+cambio de cuenta
