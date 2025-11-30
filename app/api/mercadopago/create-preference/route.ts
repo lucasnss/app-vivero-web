@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     for (const item of body.items) {
       console.log(`- Validando stock para: ${item.product_name} (ID: ${item.product_id}, Cantidad: ${item.quantity})`)
       try {
-        const stockValid = await cartService.validateStock(item.product_id, item.quantity)
+        const stockValid = await cartService.validateStockForCheckout(item.product_id, item.quantity)
         console.log(`- Stock válido para ${item.product_name}:`, stockValid)
         if (!stockValid.isValid) {
           console.log(`❌ Stock insuficiente para ${item.product_name}`)

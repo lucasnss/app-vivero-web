@@ -7,6 +7,21 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.2] - 2025-11-30
+
+### 🐛 Corregido
+- **Validación de stock en checkout**: Corregido bug crítico que impedía comprar todo el stock disponible (ej: 8 de 8 unidades)
+  - La función `validateStock()` restaba incorrectamente `currentInCart` durante el checkout
+  - Creada nueva función `validateStockForCheckout()` que compara directamente contra el stock del producto
+  - Ahora es posible comprar todas las unidades disponibles de un producto
+
+### 📄 Archivos Modificados
+- `src/services/cartService.ts` - Agregada función `validateStockForCheckout()`
+- `app/api/mercadopago/create-preference/route.ts` - Uso de nueva función de validación
+- `src/hooks/useCheckoutMP.ts` - Uso de nueva función de validación
+
+---
+
 ## [2.0.1] - 2025-01-27
 
 ### ✨ Agregado

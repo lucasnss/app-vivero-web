@@ -2,14 +2,45 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 # 📋 Tasks - ViveroWeb
 
 ## Estado General
-- **Versión**: 2.0.0
-- **Última actualización**: 2025-11-20
+- **Versión**: 2.0.3
+- **Última actualización**: 2025-11-30
 - **Estado del Build**: ✅ Exitoso (Exit code: 0)
 - **Listo para Deploy**: ✅ Sí
 
 ---
 
-## 🔴 FASE ACTUAL: BUILD & DEPLOYMENT PREP
+## 🔴 FASE ACTUAL: MEJORAS DE UX EN HISTORIAL
+
+### ✅ Completadas (2025-11-30)
+
+- [x] **Mejora visual de badges de forma de entrega**
+  - [x] Cambiar colores de badges "Retiro" y "Domicilio" en historial de ventas
+  - [x] Domicilio: Fondo azul con texto blanco + ícono 🚚
+  - [x] Retiro: Fondo verde con texto blanco + ícono 🏪
+  - [x] Verificar que el build sea exitoso después de los cambios
+
+**Resultado**: Mejora significativa en la legibilidad y UX de los badges de forma de entrega
+
+---
+
+## 🟢 FASES ANTERIORES
+
+## 🔴 FASE ANTERIOR: CORRECCIONES DE STOCK (Completada)
+
+### ✅ Completadas (2025-11-30)
+
+- [x] **Corrección de validación de stock en checkout**
+  - [x] Identificar bug crítico en `validateStock()` que restaba incorrectamente `currentInCart` durante checkout
+  - [x] Crear función `validateStockForCheckout()` en `src/services/cartService.ts`
+  - [x] Modificar `app/api/mercadopago/create-preference/route.ts` para usar nueva función
+  - [x] Modificar `src/hooks/useCheckoutMP.ts` para usar nueva función
+  - [x] Actualizar CHANGELOG.md con los cambios
+
+**Resultado**: Ahora es posible comprar TODAS las unidades disponibles de un producto (ej: 8 de 8)
+
+---
+
+## 🟢 FASES ANTERIORES
 
 ### ✅ Completadas (2025-11-20)
 
@@ -71,6 +102,18 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 - [ ] Configurar logging y monitoreo en producción
 - [ ] Implementar alertas para errores críticos
 - [ ] Revisar métricas de rendimiento
+
+---
+
+## 📝 ARCHIVOS MODIFICADOS (2025-11-30)
+
+### Mejora UX - Historial de Ventas
+- `app/admin/sales-history/page.tsx` - Rediseño de badges de forma de entrega
+
+### Corrección de Stock en Checkout (Anterior)
+- `src/services/cartService.ts` - Agregada función `validateStockForCheckout()`
+- `app/api/mercadopago/create-preference/route.ts` - Uso de nueva función de validación
+- `src/hooks/useCheckoutMP.ts` - Uso de nueva función de validación
 
 ---
 
@@ -157,7 +200,5 @@ O deployar directamente a Vercel/servicio de hosting.
 
 ---
 
-**Última revisión**: 2025-11-20
+**Última revisión**: 2025-11-30
 **Revisado por**: Sistema de Asistencia
-
-cambio de cuenta

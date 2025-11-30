@@ -206,6 +206,50 @@ export const cartService = {
     }
   },
 
+  /**
+   * Validar stock para checkout - NO resta lo que ya está en el carrito
+   * Usa directamente el stock del producto vs cantidad solicitada
+   * Esta función se usa durante el checkout cuando los items YA están en el carrito
+   */
+  async validateStockForCheckout(productId: string, requestedQuantity: number): Promise<CartValidationResult> {
+    try {
+      const product = await productService.getProductById(productId)
+      
+      if (!product) {
+        return {
+          isValid: false,
+          availableStock: 0,
+          message: "Producto no encontrado"
+        }
+      }
+
+      // Durante checkout, comparamos directamente contra el stock del producto
+      // porque los items YA están en el carrito
+      if (requestedQuantity > product.stock) {
+        return {
+          isValid: false,
+          availableStock: product.stock,
+          message: product.stock === 0 
+            ? "No hay stock disponible" 
+            : `Solo hay ${product.stock} unidades disponibles`
+        }
+      }
+
+      return {
+        isValid: true,
+        availableStock: product.stock,
+        message: ""
+      }
+    } catch (error) {
+      console.error("Error validando stock para checkout:", error)
+      return {
+        isValid: false,
+        availableStock: 0,
+        message: "Error al verificar stock"
+      }
+    }
+  },
+
   async getAvailableStock(productId: string): Promise<number> {
     try {
       const product = await productService.getProductById(productId)

@@ -8,6 +8,17 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}"
   ],
+  safelist: [
+    // Colores para estados de órdenes (evitar que Tailwind las purgue)
+    'bg-emerald-500', 'text-white', 'border-emerald-700',
+    'bg-yellow-500', 'text-black', 'border-yellow-600',
+    'bg-lime-500', 'border-lime-600',
+    'bg-orange-400', 'border-orange-600',
+    'bg-red-600', 'text-white', 'border-red-800',
+    'bg-gray-500', 'border-gray-600',
+    'bg-slate-400', 'border-slate-600',
+    'font-bold'
+  ],
   theme: {
   	extend: {
   		colors: {
