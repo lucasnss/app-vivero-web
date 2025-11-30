@@ -60,8 +60,8 @@ export async function getAllProducts(includeOutOfStock = false): Promise<Product
     return []
   }
   
-  // Filtrar productos sin stock si es necesario
-  return includeOutOfStock ? result.data : result.data.filter((p: Product) => p.stock > 0)
+  // Retornar todos los productos sin filtrar por stock
+  return result.data
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
