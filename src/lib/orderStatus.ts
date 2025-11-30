@@ -97,11 +97,11 @@ export function toUiState(
 export function uiColorClasses(state: UiState): string {
   switch (state) {
       case 'Completado':
-        return 'bg-emerald-500 text-white font-bold border-emerald-700';
+        return 'bg-green-500 text-black font-bold border-green-700';
       case 'Envío pendiente':
         return 'bg-yellow-500 text-black font-bold border-yellow-600';
       case 'Listo para retirar':
-        return 'bg-lime-500 text-black font-bold border-lime-600';
+        return 'bg-emerald-500 text-black font-bold border-emerald-600';
       case 'Pendiente':
         return 'bg-orange-400 text-black font-bold border-orange-600';
       case 'Rechazado':

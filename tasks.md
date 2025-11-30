@@ -15,11 +15,19 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 
 - [x] **Mejora visual de badges de forma de entrega**
   - [x] Cambiar colores de badges "Retiro" y "Domicilio" en historial de ventas
-  - [x] Domicilio: Fondo azul con texto blanco + ícono 🚚
-  - [x] Retiro: Fondo verde con texto blanco + ícono 🏪
+  - [x] Domicilio: Fondo blanco, borde negro, texto negro
+  - [x] Retiro: Fondo negro, borde negro, texto blanco
   - [x] Verificar que el build sea exitoso después de los cambios
 
-**Resultado**: Mejora significativa en la legibilidad y UX de los badges de forma de entrega
+- [x] **Ocultar columna TEST/REAL en historial de ventas**
+  - [x] Comentar el header de la columna "Tipo"
+  - [x] Comentar las celdas de TEST/REAL en cada fila
+
+- [x] **Corregir configuración de colores en Tailwind**
+  - [x] Agregar safelist en `tailwind.config.ts` para colores dinámicos
+  - [x] Asegurar que clases como `bg-emerald-500`, `bg-yellow-500` se compilen
+
+**Resultado**: Interfaz más limpia, mejor legibilidad y garantía de que los colores de estado se compilen correctamente
 
 ---
 
@@ -107,8 +115,9 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 
 ## 📝 ARCHIVOS MODIFICADOS (2025-11-30)
 
-### Mejora UX - Historial de Ventas
-- `app/admin/sales-history/page.tsx` - Rediseño de badges de forma de entrega
+### Mejora UX - Historial de Ventas y Configuración
+- `app/admin/sales-history/page.tsx` - Rediseño de badges de forma de entrega + Ocultamiento de columna TEST/REAL
+- `tailwind.config.ts` - Agregado safelist para garantizar compilación de colores dinámicos
 
 ### Corrección de Stock en Checkout (Anterior)
 - `src/services/cartService.ts` - Agregada función `validateStockForCheckout()`

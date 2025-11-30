@@ -7,6 +7,26 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.3] - 2025-11-30
+
+### 🎨 Mejorado
+- **Mejora visual de badges en historial de ventas**: Rediseño de badges para forma de entrega
+  - "Domicilio": Fondo blanco con borde negro y texto negro
+  - "Retiro": Fondo negro con borde negro y texto blanco
+  - Mejora significativa en el contraste y legibilidad
+  - Mejor diferenciación visual entre los dos métodos
+
+- **Ocultamiento de columna TEST/REAL**: Se comentó la columna de tipo de pago (TEST/REAL) en la tabla de historial de ventas para mejorar la presentación
+
+- **Corrección de configuración Tailwind**: Agregado safelist en `tailwind.config.ts` para garantizar que los colores dinámicos de estados se compilen correctamente
+  - Esto asegura que clases como `bg-emerald-500`, `bg-yellow-500`, etc. estén disponibles
+
+### 📄 Archivos Modificados
+- `app/admin/sales-history/page.tsx` - Rediseño de badges de forma de entrega y ocultamiento de columna TYPE
+- `tailwind.config.ts` - Agregado safelist para colores de estados
+
+---
+
 ## [2.0.2] - 2025-11-30
 
 ### 🐛 Corregido
