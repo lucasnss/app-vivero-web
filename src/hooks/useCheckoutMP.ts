@@ -58,7 +58,7 @@ export function useCheckoutMP() {
           throw new Error(`Datos de producto incompletos. Por favor, actualiza tu carrito.`)
         }
 
-        const stockValid = await cartService.validateStock(item.product_id, item.quantity)
+        const stockValid = await cartService.validateStockForCheckout(item.product_id, item.quantity)
         if (!stockValid.isValid) {
           throw new Error(`Stock insuficiente para ${item.product_name}: ${stockValid.message}`)
         }

@@ -24,8 +24,8 @@ export type PaymentStatus =
  */
 export type FulfillmentStatus = 
   | 'none'                 // Sin estado logístico definido
-  | 'awaiting_shipment'    // Pago OK, esperando envío
-  | 'awaiting_pickup'      // Pago OK, listo para retirar
+  | 'awaiting_shipment'    // Esperando envío
+  | 'awaiting_pickup'      // Listo para retirar
   | 'shipped'              // Enviado (opcional, para tracking)
   | 'delivered'            // Entregado
   | 'pickup_completed'     // Retirado por cliente
@@ -36,8 +36,8 @@ export type FulfillmentStatus =
  */
 export type UiState = 
   | 'Completado'
-  | 'Pago OK · Envío pendiente'
-  | 'Pago OK · Listo para retirar'
+  | 'Envío pendiente'
+  | 'Listo para retirar'
   | 'Pendiente'
   | 'Rechazado'
   | 'Cancelado';
@@ -64,16 +64,16 @@ export function toUiState(
       return 'Completado';
     }
     if (fulfillmentStatus === 'awaiting_shipment') {
-      return 'Pago OK · Envío pendiente';
+      return 'Envío pendiente';
     }
     if (fulfillmentStatus === 'awaiting_pickup') {
-      return 'Pago OK · Listo para retirar';
+      return 'Listo para retirar';
     }
     if (fulfillmentStatus === 'shipped') {
-      return 'Pago OK · Envío pendiente'; // Enviado pero no entregado
+      return 'Envío pendiente'; // Enviado pero no entregado
     }
     // Fallback: si no definieron fulfillment aún, tratar como envío pendiente
-    return 'Pago OK · Envío pendiente';
+    return 'Envío pendiente';
   }
 
   // Estados de pago no aprobados
@@ -96,21 +96,21 @@ export function toUiState(
  */
 export function uiColorClasses(state: UiState): string {
   switch (state) {
-    case 'Completado':
-      return 'bg-green-600 text-black font-bold border-green-700';
-    case 'Pago OK · Envío pendiente':
-      return 'bg-orange-600 text-black font-bold border-orange-700';
-    case 'Pago OK · Listo para retirar':
-      return 'bg-green-600 text-black font-bold border-green-700';
-    case 'Pendiente':
-      return 'bg-amber-500 text-black font-bold border-amber-600';
-    case 'Rechazado':
-      return 'bg-red-600 text-black font-bold border-red-700';
-    case 'Cancelado':
-      return 'bg-gray-500 text-black font-bold border-gray-600';
-    default:
-      return 'bg-gray-500 text-black font-bold border-gray-600';
-  }
+      case 'Completado':
+        return 'bg-green-500 text-black font-bold border-green-700';
+      case 'Envío pendiente':
+        return 'bg-yellow-500 text-black font-bold border-yellow-600';
+      case 'Listo para retirar':
+        return 'bg-emerald-500 text-black font-bold border-emerald-600';
+      case 'Pendiente':
+        return 'bg-orange-400 text-black font-bold border-orange-600';
+      case 'Rechazado':
+        return 'bg-red-600 text-white font-bold border-red-800';
+      case 'Cancelado':
+        return 'bg-gray-500 text-white font-bold border-gray-600';
+      default:
+        return 'bg-slate-400 text-black font-bold border-slate-600';
+  }    
 }
 
 /**
@@ -120,9 +120,9 @@ export function uiIcon(state: UiState): string {
   switch (state) {
     case 'Completado':
       return 'CheckCircle';
-    case 'Pago OK · Envío pendiente':
+    case 'Envío pendiente':
       return 'Truck';
-    case 'Pago OK · Listo para retirar':
+    case 'Listo para retirar':
       return 'Package';
     case 'Pendiente':
       return 'Clock';
@@ -185,8 +185,8 @@ export function groupOrdersByUiState<T extends { payment_status: PaymentStatus; 
 ): Record<UiState, T[]> {
   const grouped: Record<UiState, T[]> = {
     'Completado': [],
-    'Pago OK · Envío pendiente': [],
-    'Pago OK · Listo para retirar': [],
+    'Envío pendiente': [],
+    'Listo para retirar': [],
     'Pendiente': [],
     'Rechazado': [],
     'Cancelado': []
@@ -260,7 +260,7 @@ export const VALID_SHIPPING_METHODS: ShippingMethod[] = ['delivery', 'pickup'];
  * Estados UI válidos
  */
 export const VALID_UI_STATES: UiState[] = [
-  'Completado', 'Pago OK · Envío pendiente', 'Pago OK · Listo para retirar', 'Pendiente', 'Rechazado', 'Cancelado'
+  'Completado', 'Envío pendiente', 'Listo para retirar', 'Pendiente', 'Rechazado', 'Cancelado'
 ];
 
 // =============================================================================

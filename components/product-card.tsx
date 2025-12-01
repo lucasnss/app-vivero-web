@@ -94,11 +94,6 @@ export default function ProductCard({ product, showOutOfStock = false }: Product
   console.log('🔍 Debug ProductCard - currentImageIndex:', currentImageIndex)
   console.log('🔍 Debug ProductCard - currentImage URL:', currentImage)
 
-  // Si no hay stock y no se debe mostrar, no renderizar nada
-  if (!showOutOfStock && product.stock === 0) {
-    return null
-  }
-
   // Cargar stock disponible al montar el componente y cuando cambie el carrito
   useEffect(() => {
     const loadStock = async () => {
@@ -272,6 +267,7 @@ export default function ProductCard({ product, showOutOfStock = false }: Product
   }
    
   const getStockStatus = (stock: number) => {
+    if (stock === 0) return { text: "Agotado", color: "bg-gray-500" }
     if (stock > 10) return { text: "Hay stock", color: "bg-green-500" }
     if (stock > 5) return { text: "Últimos 10 productos", color: "bg-yellow-500" }
     return { text: "Últimos 5 productos", color: "bg-red-500" }
@@ -402,15 +398,15 @@ export default function ProductCard({ product, showOutOfStock = false }: Product
             </select>
             <button
               onClick={handleAddToCart}
-              disabled={availableStock === 0}
+              disabled={product.stock === 0}
               className={`flex-1 font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-1 ${
-                availableStock === 0 
+                product.stock === 0 
                   ? 'bg-gray-400 cursor-not-allowed text-gray-600' 
                   : 'bg-green-600 hover:bg-green-700 text-white'
               }`}
             >
               <Plus className="h-4 w-4" />
-              <span>{availableStock === 0 ? 'Sin stock' : 'Agregar'}</span>
+              <span>{product.stock === 0 ? 'Sin stock' : 'Agregar'}</span>
             </button>
             <button
               onClick={() => setShowCareInfo(true)}

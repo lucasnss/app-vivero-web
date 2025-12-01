@@ -511,8 +511,8 @@ export default function SalesHistoryPage() {
                 <SelectContent>
                   <SelectItem value="" className="text-black">Todos los estados</SelectItem>
                   <SelectItem value="Completado" className="text-black">Completado</SelectItem>
-                  <SelectItem value="Pago OK · Envío pendiente" className="text-black">Pago OK · Envío pendiente</SelectItem>
-                  <SelectItem value="Pago OK · Listo para retirar" className="text-black">Pago OK · Listo para retirar</SelectItem>
+                  <SelectItem value="Envío pendiente" className="text-black">Envío pendiente</SelectItem>
+                  <SelectItem value="Listo para retirar" className="text-black">Listo para retirar</SelectItem>
                   <SelectItem value="Pendiente" className="text-black">Pendiente</SelectItem>
                   <SelectItem value="Rechazado" className="text-black">Rechazado</SelectItem>
                   <SelectItem value="Cancelado" className="text-black">Cancelado</SelectItem>
@@ -633,7 +633,7 @@ export default function SalesHistoryPage() {
                     <TableHead className="text-black">Estado</TableHead>
                     <TableHead className="text-black">Completado</TableHead>
                     <TableHead className="text-black">Cliente</TableHead>
-                    <TableHead className="text-black">Tipo</TableHead>
+                    {/* <TableHead className="text-black">Tipo</TableHead> */}
                     <TableHead className="text-black">Monto</TableHead>
                     <TableHead className="text-black">Forma de entrega</TableHead>
                     <TableHead className="text-black hidden md:table-cell">Fecha</TableHead>
@@ -669,7 +669,7 @@ export default function SalesHistoryPage() {
                           <div className="text-sm text-black">{order.customer_email || 'Sin email'}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         {order.payment_source === 'test' ? (
                           <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-300">
                             🧪 TEST
@@ -679,14 +679,20 @@ export default function SalesHistoryPage() {
                             ✅ REAL
                           </Badge>
                         )}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="font-medium text-black">
                         ${order.total_amount.toLocaleString()}
                       </TableCell>
                       <TableCell>
-                        <Badge variant={order.shipping_method === 'delivery' ? 'default' : 'secondary'} className="text-black">
-                          {order.shipping_method === 'delivery' ? 'Domicilio' : 'Retiro'}
-                        </Badge>
+                        {order.shipping_method === 'delivery' ? (
+                          <Badge className="bg-white text-black border border-black">
+                            Domicilio
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-black text-white border border-black">
+                            Retiro
+                          </Badge>
+                        )}
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-black">
                         {new Date(order.created_at).toLocaleDateString('es-ES')}

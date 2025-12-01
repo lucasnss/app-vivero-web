@@ -19,8 +19,8 @@ export default function HomePage() {
     
     getFeaturedProducts()
       .then(products => {
-        // Filtrar productos sin stock
-        const productsWithStock = products.filter(p => p.stock > 0)
+        // Mostrar todos los productos incluyendo los con stock=0
+        const productsWithStock = products
         setProducts(productsWithStock)
       })
       .catch(error => {

@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/supabaseClient'
 import { logService } from './logService'
-import { productService } from './productService'
 import { 
   Order, 
   CreateOrderRequest, 
@@ -553,71 +552,7 @@ export const orderService = {
   },
 
   /**
-   * ✅ FASE 1: Validar disponibilidad de stock para los items de una orden
-   * Valida que haya stock suficiente ANTES de aprobar el pago
-   */
-  async validateStockAvailability(items: Array<{product_id: string, quantity: number, product_name?: string}>): Promise<{
-    valid: boolean
-    message?: string
-    insufficientItems?: Array<{product_id: string, product_name: string, requested: number, available: number}>
-  }> {
-    try {
-      const insufficientItems: Array<{product_id: string, product_name: string, requested: number, available: number}> = []
-      
-      console.log('🔍 Validando stock para', items.length, 'productos...')
-      
-      for (const item of items) {
-        const product = await productService.getProductById(item.product_id)
-        
-        if (!product) {
-          console.error('❌ Producto no encontrado:', item.product_id)
-          return {
-            valid: false,
-            message: `Producto con ID ${item.product_id} no encontrado`
-          }
-        }
-        
-        console.log(`  - ${product.name}: ${product.stock} disponible, ${item.quantity} solicitado`)
-        
-        if (product.stock < item.quantity) {
-          insufficientItems.push({
-            product_id: item.product_id,
-            product_name: product.name,
-            requested: item.quantity,
-            available: product.stock
-          })
-        }
-      }
-      
-      if (insufficientItems.length > 0) {
-        const details = insufficientItems
-          .map(i => `${i.product_name}: solicitado ${i.requested}, disponible ${i.available}`)
-          .join(', ')
-        
-        console.error('❌ Stock insuficiente:', details)
-        
-        return {
-          valid: false,
-          message: `Stock insuficiente para: ${details}`,
-          insufficientItems
-        }
-      }
-      
-      console.log('✅ Validación de stock exitosa')
-      return { valid: true }
-      
-    } catch (error) {
-      console.error('❌ Error validando stock:', error)
-      return {
-        valid: false,
-        message: 'Error al validar disponibilidad de stock'
-      }
-    }
-  },
-
-  /**
-   * ✅ FASE 1: Marcar orden como pagada y REDUCIR STOCK
-   * Ahora incluye validación de stock y reducción automática
+   * Marcar orden como pagada y actualizar estado
    */
   async markOrderAsPaid(orderId: string, paymentInfo: {
     payment_id: string
@@ -627,45 +562,10 @@ export const orderService = {
     fulfillment_status?: string
   }): Promise<Order> {
     try {
-      console.log('💰 Marcando orden como pagada:', orderId)
-      
-      // ✅ PASO 1: Obtener la orden completa con sus items
-      const order = await this.getOrderById(orderId)
-      if (!order) {
-        throw new Error('Orden no encontrada')
-      }
-      
-      console.log('📦 Orden encontrada con', order.items?.length || 0, 'items')
-      
-      // ✅ PASO 2: VALIDAR STOCK ANTES DE APROBAR (FASE 1)
-      console.log('🔍 Validando disponibilidad de stock...')
-      const stockValidation = await this.validateStockAvailability(order.items || [])
-      
-      if (!stockValidation.valid) {
-        const errorMsg = `Stock insuficiente: ${stockValidation.message}`
-        console.error('❌', errorMsg)
-        
-        // Log de error para debugging
-        await logService.recordActivity({
-          action: 'order_payment_rejected_insufficient_stock',
-          entity_type: 'order',
-          entity_id: orderId,
-          details: {
-            payment_id: paymentInfo.payment_id,
-            validation_result: stockValidation,
-            error: errorMsg
-          }
-        })
-        
-        throw new Error(errorMsg)
-      }
-      
-      console.log('✅ Stock validado correctamente')
-      
-      // ✅ PASO 3: Actualizar payment_status en la BD
+      // Actualizar tanto el payment_status como el status de la orden
       const updateData: any = {
         payment_status: 'approved',
-        status: 'confirmed',
+        status: 'confirmed', // Cambiar status de la orden también
         payment_id: paymentInfo.payment_id,
         metodo_pago: paymentInfo.metodo_pago,
         fecha_pago: paymentInfo.fecha_pago,
@@ -673,6 +573,7 @@ export const orderService = {
         updated_at: new Date().toISOString()
       }
 
+      // Agregar fulfillment_status si se proporciona
       if (paymentInfo.fulfillment_status) {
         updateData.fulfillment_status = paymentInfo.fulfillment_status
       }
@@ -685,64 +586,11 @@ export const orderService = {
         .single()
 
       if (error) {
-        console.error('❌ Error actualizando orden:', error)
+        console.error('Error marking order as paid:', error)
         throw new Error('Error al marcar orden como pagada')
       }
 
-      console.log('✅ Orden actualizada en BD')
-
-      // ✅ PASO 4: REDUCIR STOCK DE PRODUCTOS (FASE 1)
-      console.log('📉 Reduciendo stock de productos...')
-      const stockReductionErrors: Array<any> = []
-      
-      try {
-        for (const item of order.items || []) {
-          console.log(`  - Reduciendo ${item.quantity} unidades de ${item.product_name || item.product_id}`)
-          
-          const success = await productService.updateStock(item.product_id, item.quantity)
-          
-          if (!success) {
-            stockReductionErrors.push({
-              product_id: item.product_id,
-              product_name: item.product_name || 'Producto',
-              quantity: item.quantity
-            })
-          }
-        }
-        
-        if (stockReductionErrors.length > 0) {
-          console.error('⚠️ Algunos productos no pudieron actualizar stock:', stockReductionErrors)
-          
-          // Log para debugging (NO fallar la orden, solo registrar)
-          await logService.recordActivity({
-            action: 'stock_reduction_partial_failure',
-            entity_type: 'order',
-            entity_id: orderId,
-            details: {
-              failed_products: stockReductionErrors,
-              payment_id: paymentInfo.payment_id
-            }
-          })
-        } else {
-          console.log('✅ Stock reducido exitosamente para todos los productos')
-        }
-      } catch (stockError) {
-        console.error('❌ Error reduciendo stock:', stockError)
-        
-        // Log del error pero NO fallar la orden (ya fue pagada)
-        await logService.recordActivity({
-          action: 'stock_reduction_error',
-          entity_type: 'order',
-          entity_id: orderId,
-          details: {
-            error: stockError instanceof Error ? stockError.message : 'Error desconocido',
-            payment_id: paymentInfo.payment_id,
-            // TODO FASE 2: Implementar rollback manual si es crítico
-          }
-        })
-      }
-
-      // Registrar actividad de pago aprobado
+      // Registrar actividad importante
       await logService.recordActivity({
         action: 'order_paid',
         entity_type: 'order',
@@ -752,22 +600,19 @@ export const orderService = {
           metodo_pago: paymentInfo.metodo_pago,
           fecha_pago: paymentInfo.fecha_pago,
           previous_status: 'pending',
-          new_status: 'confirmed',
-          stock_reduced: stockReductionErrors.length === 0
+          new_status: 'confirmed'
         }
       })
 
-      // Obtener orden completa actualizada
+      // Obtener orden completa
       const fullOrder = await this.getOrderById(orderId)
       if (!fullOrder) {
         throw new Error('Orden no encontrada después de marcar como pagada')
       }
-      
-      console.log('✅ Orden marcada como pagada exitosamente')
       return fullOrder
 
     } catch (error) {
-      console.error('❌ Error in markOrderAsPaid:', error)
+      console.error('Error in markOrderAsPaid:', error)
       throw error
     }
   },
