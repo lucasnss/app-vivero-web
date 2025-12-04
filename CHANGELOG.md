@@ -7,6 +7,16 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.5] - 2025-12-01
+
+### 🎨 Mejorado
+- **Posición del botón "Descargar PDF" en modal**: Ajustada posición del botón para evitar solapamiento con el botón de cerrar (X)
+  - Agregado margen derecho (`mr-10`) de 40px al botón "Descargar PDF"
+  - Mejora la usabilidad y evita confusiones al interactuar con el modal
+  - Archivo modificado: `components/OrderDetailModal.tsx`
+
+---
+
 ## [2.0.4] - 2025-12-01
 
 ### 🐛 Corregido
@@ -31,7 +41,7 @@ Se identificaron 7 problemas en análisis anterior (ver ANALISIS-PROBLEMAS.md):
 2. 🟡 SSR en página del carrito - Pendiente optimización
 3. 🟡 SSR en modal historial - Pendiente optimización  
 4. 🟡 SSR al completar orden - Pendiente optimización
-5. 🟢 Posición botón PDF - Quick fix pendiente
+5. ✅ Posición botón PDF - **RESUELTO**
 6. 🔴 Botones hero sin funcionalidad - **PRÓXIMO (ALTA PRIORIDAD)**
 7. 🟢 Stock en 0 - Decisión de negocio pendiente
 

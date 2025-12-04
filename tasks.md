@@ -99,10 +99,10 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
   - [ ] Agregar `onClick` al botón "Guía de cuidado" → navega a `/recomendaciones`
   - [ ] Archivo: `components/hero.tsx`
 
-- [ ] **Problema 5: Posición del Botón PDF en Modal** (🟢 BAJA - Quick Fix)
-  - [ ] Mover botón "Descargar PDF" lejos del botón cerrar (X)
-  - [ ] Opción: Mover al footer del modal
-  - [ ] Archivo: `components/OrderDetailModal.tsx`
+- [x] **Problema 5: Posición del Botón PDF en Modal** (🟢 BAJA - Quick Fix)
+  - [x] Mover botón "Descargar PDF" lejos del botón cerrar (X)
+  - [x] Agregado margen derecho (mr-10) para separar el botón de la X
+  - [x] Archivo: `components/OrderDetailModal.tsx`
 
 - [ ] **Problema 7: Permitir Stock en 0** (🟢 BAJA - Decisión de Negocio)
   - [ ] Decidir: ¿Mostrar productos con stock 0 o con badge "Agotado"?
