@@ -75,7 +75,7 @@ export default function CarritoPage() {
     const item = cartItems.find(i => i.product_id === id)
     const product = products.find(p => p.id === id)
     
-    if (item && product && item.quantity < Math.min(15, product.availableStock + item.quantity)) {
+    if (item && product && item.quantity < Math.min(15, product.stock)) {
       cartService.updateCartItemQuantity(id, item.quantity + 1)
     }
   }
@@ -167,8 +167,8 @@ export default function CarritoPage() {
                         <button 
                           className="p-1 rounded-full bg-gray-100 hover:bg-gray-200" 
                           onClick={() => handleIncrement(item.id)} 
-                          disabled={item.quantity >= Math.min(15, item.availableStock + item.quantity)}
-                          title={item.quantity >= Math.min(15, item.availableStock + item.quantity) ? "No hay más stock disponible" : "Agregar una unidad"}
+                          disabled={item.quantity >= Math.min(15, item.stock)}
+                          title={item.quantity >= Math.min(15, item.stock) ? "No hay más stock disponible" : "Agregar una unidad"}
                         >
                           <Plus className="h-4 w-4" />
                         </button>

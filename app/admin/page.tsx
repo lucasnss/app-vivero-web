@@ -828,7 +828,7 @@ export default function AdminPage() {
                       <input
                         type="number"
                         name="stock"
-                        value={form.stock || ''}
+                        value={form.stock !== undefined && form.stock !== null ? form.stock : ''}
                         onChange={handleChange}
                         min="0"
                         className="w-full px-3 py-2 border rounded-md"
