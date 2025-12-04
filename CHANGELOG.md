@@ -7,6 +7,17 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.6] - 2025-12-01
+
+### ✨ Agregado
+- **Funcionalidad a botones del Hero**: Implementada navegación y scroll en los botones principales
+  - Botón "Guía de cuidado" ahora navega a la página `/recomendaciones`
+  - Botón "Explorar catálogo" hace scroll suave hasta la sección "Explora por Categorías"
+  - Agregado id `categorias-section` a la sección de categorías para permitir scroll
+  - Archivos modificados: `components/hero.tsx`, `components/categories-section.tsx`
+
+---
+
 ## [2.0.5] - 2025-12-01
 
 ### 🎨 Mejorado
@@ -42,7 +53,7 @@ Se identificaron 7 problemas en análisis anterior (ver ANALISIS-PROBLEMAS.md):
 3. 🟡 SSR en modal historial - Pendiente optimización  
 4. 🟡 SSR al completar orden - Pendiente optimización
 5. ✅ Posición botón PDF - **RESUELTO**
-6. 🔴 Botones hero sin funcionalidad - **PRÓXIMO (ALTA PRIORIDAD)**
+6. ✅ Botones hero sin funcionalidad - **RESUELTO**
 7. 🟢 Stock en 0 - Decisión de negocio pendiente
 
 ---

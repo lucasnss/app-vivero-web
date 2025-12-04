@@ -94,10 +94,11 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 
 #### Problemas Identificados por Orden de Prioridad:
 
-- [ ] **Problema 6: Botones del Hero Sin Funcionalidad** (🔴 ALTA PRIORIDAD)
-  - [ ] Agregar `onClick` al botón "Explorar catálogo" → navega a `/categorias`
-  - [ ] Agregar `onClick` al botón "Guía de cuidado" → navega a `/recomendaciones`
-  - [ ] Archivo: `components/hero.tsx`
+- [x] **Problema 6: Botones del Hero Sin Funcionalidad** (🔴 ALTA PRIORIDAD)
+  - [x] Agregar `onClick` al botón "Explorar catálogo" → hace scroll a sección de categorías
+  - [x] Agregar `onClick` al botón "Guía de cuidado" → navega a `/recomendaciones`
+  - [x] Agregado id "categorias-section" a la sección de categorías para scroll
+  - [x] Archivo: `components/hero.tsx`, `components/categories-section.tsx`
 
 - [x] **Problema 5: Posición del Botón PDF en Modal** (🟢 BAJA - Quick Fix)
   - [x] Mover botón "Descargar PDF" lejos del botón cerrar (X)
