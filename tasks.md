@@ -9,7 +9,19 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 
 ---
 
-## 🔴 FASE ACTUAL: MEJORAS DE UX EN HISTORIAL
+## 🔴 FASE ACTUAL: CORRECCIONES CRÍTICAS Y MEJORAS DE UX
+
+### ✅ Completadas (2025-12-01)
+
+- [x] **Corrección de descuento de stock en compras**
+  - [x] Implementar reducción de stock cuando se completa el pago en MercadoPago
+  - [x] Llamar `productService.updateStock()` en webhook de MercadoPago
+  - [x] Reducir stock de todos los items de la orden
+
+- [x] **Corrección de envío de emails**
+  - [x] Generar nueva contraseña de aplicación en Google (2FA requerido)
+  - [x] Actualizar credenciales en `.env.local`
+  - [x] Verificar que los emails se envíen correctamente después de cambio de stock
 
 ### ✅ Completadas (2025-11-30)
 
@@ -77,6 +89,43 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 ---
 
 ## 🟡 PRÓXIMAS FASES
+
+### 🔴 FASE ACTUAL: CORRECCIONES DE UX Y FUNCIONALIDAD (PRIORITARIAS)
+
+#### Problemas Identificados por Orden de Prioridad:
+
+- [ ] **Problema 6: Botones del Hero Sin Funcionalidad** (🔴 ALTA PRIORIDAD)
+  - [ ] Agregar `onClick` al botón "Explorar catálogo" → navega a `/categorias`
+  - [ ] Agregar `onClick` al botón "Guía de cuidado" → navega a `/recomendaciones`
+  - [ ] Archivo: `components/hero.tsx`
+
+- [ ] **Problema 5: Posición del Botón PDF en Modal** (🟢 BAJA - Quick Fix)
+  - [ ] Mover botón "Descargar PDF" lejos del botón cerrar (X)
+  - [ ] Opción: Mover al footer del modal
+  - [ ] Archivo: `components/OrderDetailModal.tsx`
+
+- [ ] **Problema 7: Permitir Stock en 0** (🟢 BAJA - Decisión de Negocio)
+  - [ ] Decidir: ¿Mostrar productos con stock 0 o con badge "Agotado"?
+  - [ ] Si se muestra: Remover filtro en `app/page.tsx:23`
+  - [ ] Archivo: `app/page.tsx`
+
+- [ ] **Problema 2: Optimizar SSR en Página del Carrito** (🟡 MEDIA)
+  - [ ] Guardar datos completos del producto en localStorage (nombre, precio, imagen, stock)
+  - [ ] Reducir fetches de 2 por producto a 0
+  - [ ] Archivo: `src/services/cartService.ts`, `app/carrito/page.tsx`
+
+- [ ] **Problema 3: Optimizar Modal "Ver Detalle"** (🟡 MEDIA)
+  - [ ] Cargar todos los detalles en la query inicial del historial
+  - [ ] Pasar datos directamente al modal sin fetch adicional
+  - [ ] Archivo: `app/admin/sales-history/page.tsx`
+
+- [ ] **Problema 4: Optimizar UI al Completar Orden** (🟡 BAJA - Optimización UX)
+  - [ ] Implementar Optimistic UI Update
+  - [ ] Actualizar estado local inmediatamente
+  - [ ] Revertir solo si falla el fetch
+  - [ ] Archivo: `components/OrderCompletionToggle.tsx`
+
+---
 
 ### 📦 FASE 2: DEPLOY A PRODUCCIÓN
 - [ ] Deploy a Vercel o servicio de hosting

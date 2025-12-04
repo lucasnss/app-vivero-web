@@ -7,6 +7,36 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.0.4] - 2025-12-01
+
+### 🐛 Corregido
+- **Descuento de stock en compras**: Bug crítico donde el stock NO se reducía al completar una orden
+  - Implementada reducción de stock cuando se aprueba el pago en MercadoPago
+  - Se llama `productService.updateStock()` en el webhook para cada item de la orden
+  - Ahora el inventario se actualiza correctamente después de cada compra
+
+- **Envío de emails**: Error de autenticación con Gmail
+  - Implementado uso correcto de contraseñas de aplicación de Google
+  - Se requiere 2FA habilitado en la cuenta de Google
+  - Los emails se envían correctamente con detalles de la orden y PDF adjunto
+
+### 📄 Archivos Modificados
+- `src/services/orderService.ts` - Agregada reducción de stock en `markOrderAsPaid()`
+- `app/api/mercadopago/webhook/route.ts` - Implementado descuento de stock en webhook
+- `.env.local` - Actualizada contraseña de aplicación de Google
+
+### 📝 Problemas Identificados Pendientes de Resolver
+Se identificaron 7 problemas en análisis anterior (ver ANALISIS-PROBLEMAS.md):
+1. ✅ Descuento de stock - **RESUELTO**
+2. 🟡 SSR en página del carrito - Pendiente optimización
+3. 🟡 SSR en modal historial - Pendiente optimización  
+4. 🟡 SSR al completar orden - Pendiente optimización
+5. 🟢 Posición botón PDF - Quick fix pendiente
+6. 🔴 Botones hero sin funcionalidad - **PRÓXIMO (ALTA PRIORIDAD)**
+7. 🟢 Stock en 0 - Decisión de negocio pendiente
+
+---
+
 ## [2.0.3] - 2025-11-30
 
 ### 🎨 Mejorado
