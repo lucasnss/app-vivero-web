@@ -1,65 +1,58 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useMemo } from "react"
 import Navbar from "@/components/navbar"
 import ProductCard from "@/components/product-card"
 import Footer from "@/components/footer"
-import { getAllProducts, Product } from "@/lib/products"
 import SearchBar from "@/components/search-bar"
 import { Search } from "lucide-react"
-import { getAllCategories } from "@/lib/categories"
+import { useProductsWithStock } from "@/lib/hooks/useProducts"
+import { useCategories } from "@/lib/hooks/useCategories"
 
 export default function PlantasPage() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
+  const { products, isLoading: loadingProducts, isError: errorProducts } = useProductsWithStock()
+  const { categories, isLoading: loadingCategories, isError: errorCategories } = useCategories()
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const products = await getAllProducts(false) // No incluir productos sin stock
-        const categories = await getAllCategories()
-        
-        // IDs de categorías de plantas
-        const plantCategoryIds = categories
-          .filter(cat => 
-            cat.name.includes("Plantas") || 
-            cat.name.includes("Árboles") || 
-            cat.name.includes("Palmeras") || 
-            cat.name.includes("Coníferas") || 
-            cat.name.includes("Arbustos") || 
-            cat.name.includes("Frutales")
-          )
-          .map(cat => cat.id)
-        
-        const plantProducts = products.filter(product => 
-          plantCategoryIds.includes(product.category_id)
-        )
-        
-        setFilteredProducts(
-          plantProducts.filter(
-            (product) =>
-              product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              product.scientificName.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        )
-      } catch (error) {
-        console.error("Error cargando productos:", error)
-      }
-    }
+  // Filtrar productos de plantas
+  const plantProducts = useMemo(() => {
+    const plantCategoryIds = categories
+      .filter(cat => 
+        cat.name.includes("Plantas") || 
+        cat.name.includes("Árboles") || 
+        cat.name.includes("Palmeras") || 
+        cat.name.includes("Coníferas") || 
+        cat.name.includes("Arbustos") || 
+        cat.name.includes("Frutales")
+      )
+      .map(cat => cat.id)
     
-    loadProducts()
-  }, [searchQuery])
+    return products.filter(product => 
+      plantCategoryIds.includes(product.category_id)
+    )
+  }, [products, categories])
+
+  // Filtrar por búsqueda
+  const filteredProducts = useMemo(() => {
+    return plantProducts.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.scientificName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [plantProducts, searchQuery])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
   }
 
+  const isLoading = loadingProducts || loadingCategories
+  const hasError = errorProducts || errorCategories
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-yellow-50">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-600 to-yellow-500">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">Nuestras Plantas</h1>
@@ -70,14 +63,12 @@ export default function PlantasPage() {
         </div>
       </section>
 
-      {/* Search Bar */}
       <section className="py-6 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-100 to-yellow-100">
         <div className="max-w-7xl mx-auto">
           <SearchBar onSearch={handleSearch} placeholder="Buscar plantas..." />
         </div>
       </section>
 
-      {/* Productos */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-100 to-yellow-100">
         <div className="max-w-7xl mx-auto">
           {searchQuery && (
@@ -90,7 +81,15 @@ export default function PlantasPage() {
             </div>
           )}
 
-          {filteredProducts.length > 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-800"></div>
+            </div>
+          ) : hasError ? (
+            <div className="text-center py-12">
+              <p className="text-red-600 text-lg">Error al cargar datos. Por favor, intenta de nuevo.</p>
+            </div>
+          ) : filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
@@ -105,10 +104,8 @@ export default function PlantasPage() {
               <p className="text-green-600">Intenta con otros términos de búsqueda</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">No hay plantas disponibles en este momento.</p>
             </div>
           )}
         </div>
