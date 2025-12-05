@@ -82,6 +82,7 @@
     "recharts": "^2.11.0",
     "sonner": "^1.4.0",
     "string-similarity": "^4.0.4",
+    "swr": "^2.3.7",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "undici": "^6.6.0",

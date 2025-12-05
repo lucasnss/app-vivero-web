@@ -1,78 +1,70 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useMemo } from "react"
 import Navbar from "@/components/navbar"
 import ProductCard from "@/components/product-card"
 import Footer from "@/components/footer"
-import { getAllProducts, Product } from "@/lib/products"
 import SearchBar from "@/components/search-bar"
-import { Search } from "lucide-react"
 import { useSearchParams } from "next/navigation"
-import { getAllCategories, getCategoryById } from "@/lib/categories"
-import { Category } from "@/data/categories"
+import { useProductsWithStock } from "@/lib/hooks/useProducts"
+import { useCategories } from "@/lib/hooks/useCategories"
 
 export default function CategoriasPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const searchParams = useSearchParams()
   const selectedCategoryId = searchParams.get("categoria")
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
-  const [groupedProducts, setGroupedProducts] = useState<Record<string, Product[]>>({})
-  const [categories, setCategories] = useState<Category[]>([])
+  
+  const { products, isLoading: loadingProducts, isError: errorProducts } = useProductsWithStock()
+  const { categories, isLoading: loadingCategories, isError: errorCategories } = useCategories()
 
-  useEffect(() => {
-    const loadProductsAndCategories = async () => {
-      try {
-        const products = await getAllProducts(false) // No incluir productos sin stock
-        const categoriesData = await getAllCategories()
-        setCategories(categoriesData)
-        
-        const filtered = products.filter(
-          (product) =>
-            product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.scientificName.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        setFilteredProducts(filtered)
-        
-        // Agrupar por categoría usando el nombre de la categoría
-        const grouped = filtered.reduce((acc, product) => {
-          const category = categoriesData.find(cat => cat.id === product.category_id)
-          const categoryName = category?.name || 'Sin categoría'
-          if (!acc[categoryName]) acc[categoryName] = []
-          acc[categoryName].push(product)
-          return acc
-        }, {} as Record<string, Product[]>)
-        setGroupedProducts(grouped)
-      } catch (error) {
-        console.error("Error cargando productos:", error)
-      }
-    }
-    
-    loadProductsAndCategories()
-  }, [searchQuery])
+  // Filtrar por búsqueda
+  const filteredProducts = useMemo(() => {
+    return products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.scientificName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [products, searchQuery])
+
+  // Agrupar por categoría
+  const groupedProducts = useMemo(() => {
+    return filteredProducts.reduce((acc, product) => {
+      const category = categories.find(cat => cat.id === product.category_id)
+      const categoryName = category?.name || 'Sin categoría'
+      if (!acc[categoryName]) acc[categoryName] = []
+      acc[categoryName].push(product)
+      return acc
+    }, {} as Record<string, typeof filteredProducts>)
+  }, [filteredProducts, categories])
 
   // Reordenar categorías: la seleccionada primero
-  let orderedEntries = Object.entries(groupedProducts)
-  if (selectedCategoryId) {
-    const selectedCategory = categories.find(cat => cat.id === selectedCategoryId)
-    if (selectedCategory) {
-      orderedEntries = orderedEntries.sort(([catA], [catB]) => {
-        if (catA === selectedCategory.name) return -1
-        if (catB === selectedCategory.name) return 1
-        return 0
-      })
+  const orderedEntries = useMemo(() => {
+    let entries = Object.entries(groupedProducts)
+    if (selectedCategoryId) {
+      const selectedCategory = categories.find(cat => cat.id === selectedCategoryId)
+      if (selectedCategory) {
+        entries = entries.sort(([catA], [catB]) => {
+          if (catA === selectedCategory.name) return -1
+          if (catB === selectedCategory.name) return 1
+          return 0
+        })
+      }
     }
-  }
+    return entries
+  }, [groupedProducts, selectedCategoryId, categories])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
   }
 
+  const isLoading = loadingProducts || loadingCategories
+  const hasError = errorProducts || errorCategories
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-yellow-50">
       <Navbar />
 
-      {/* Hero Section + Search Bar (unidos en un solo fondo degradado) */}
       <section className="pt-12 pb-6 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-600 to-yellow-500">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">Todas las Categorías</h1>
@@ -86,19 +78,36 @@ export default function CategoriasPage() {
         </div>
       </section>
 
-      {/* Categorías */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {orderedEntries.map(([category, products]) => (
-            <div key={category} className="mb-12">
-              <h2 className="text-2xl font-bold text-green-800 mb-4">{category}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-800"></div>
             </div>
-          ))}
+          ) : hasError ? (
+            <div className="text-center py-12">
+              <p className="text-red-600 text-lg">Error al cargar datos. Por favor, intenta de nuevo.</p>
+            </div>
+          ) : orderedEntries.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">
+                {searchQuery ? 'No se encontraron productos con esa búsqueda.' : 'No hay productos disponibles.'}
+              </p>
+            </div>
+          ) : (
+            orderedEntries.map(([category, products]) => (
+              <div key={category} className="mb-12">
+                <h2 className="text-2xl font-bold text-green-800 mb-4">
+                  {category} ({products.length})
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 
