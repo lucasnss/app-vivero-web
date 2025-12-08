@@ -300,7 +300,7 @@ export function OrderDetailModal({ isOpen, onClose, order, onOrderUpdate }: Orde
               onClick={generatePDF}
               variant="outline"
               size="sm"
-              className="flex items-center gap-2 text-green-700 border-green-700 hover:bg-green-50"
+              className="flex items-center gap-2 text-green-700 border-green-700 hover:bg-green-50 mr-10"
             >
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Descargar PDF</span>

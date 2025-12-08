@@ -1,6 +1,22 @@
+"use client"
+
 import { ArrowRight, BookOpen } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function Hero() {
+  const router = useRouter()
+
+  const handleExploreCatalog = () => {
+    const categoriasSection = document.getElementById("categorias-section")
+    if (categoriasSection) {
+      categoriasSection.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  }
+
+  const handleCareGuide = () => {
+    router.push("/recomendaciones")
+  }
+
   return (
     <section className="py-12 lg:py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -16,11 +32,17 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button className="bg-yellow-400 hover:bg-yellow-500 text-green-800 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+              <button 
+                onClick={handleExploreCatalog}
+                className="bg-yellow-400 hover:bg-yellow-500 text-green-800 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+              >
                 <span>Explorar catálogo</span>
                 <ArrowRight className="h-5 w-5" />
               </button>
-              <button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+              <button 
+                onClick={handleCareGuide}
+                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+              >
                 <BookOpen className="h-5 w-5" />
                 <span>Guía de cuidado</span>
               </button>

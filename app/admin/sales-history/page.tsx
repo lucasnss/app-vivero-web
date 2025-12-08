@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { orderService } from '@/services/orderService'
 import { calculateOrderStats, toUiState, PaymentStatus, FulfillmentStatus, ShippingMethod } from '@/src/lib/orderStatus'
@@ -84,8 +84,11 @@ interface FilterOptions {
 // 🚀 PÁGINA PRINCIPAL
 // =============================================================================
 
-export default function SalesHistoryPage() {
+function SalesHistoryContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const selectedOrderId = searchParams.get('orden') // ✅ Lee de URL
+  
   const { user, isLoading: authLoading, logout } = useAuth()
   const { toast } = useToast()
   const hasCheckedAuth = useRef(false)
@@ -121,7 +124,7 @@ export default function SalesHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20 // Tamaño de página para la paginación del frontend
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  // ✅ NO necesitamos isModalOpen - derivamos del selectedOrderId de URL
   
   const [filters, setFilters] = useState<FilterOptions>({
     uiState: '',
@@ -310,11 +313,6 @@ export default function SalesHistoryPage() {
   const handleViewDetail = async (orderId: string) => {
     try {
       console.log('🖱️ [handleViewDetail] Click en "Ver Detalle" para orden:', orderId)
-      setOrdersLoading(true)
-      
-      // Resetear estado anterior
-      setSelectedOrder(null)
-      setIsModalOpen(false)
       
       console.log('⏳ [handleViewDetail] Cargando detalle...')
       const orderDetail = await orderService.getOrderDetailForModal(orderId)
@@ -335,9 +333,11 @@ export default function SalesHistoryPage() {
         return
       }
       
-      console.log('✅ [handleViewDetail] Seteando estado y abriendo modal')
+      console.log('✅ [handleViewDetail] Seteando estado del modal')
       setSelectedOrder(orderDetail)
-      setIsModalOpen(true)
+      
+      // ✅ Actualizar URL sin recargar página y sin hacer scroll
+      router.push(`?orden=${orderId}`, { scroll: false })
       
       console.log('✅ [handleViewDetail] Modal abierto con datos:', {
         id: orderDetail.id,
@@ -350,9 +350,20 @@ export default function SalesHistoryPage() {
         description: "No se pudo cargar el detalle de la orden",
         variant: "destructive"
       })
-    } finally {
-      setOrdersLoading(false)
     }
+  }
+
+  // ✅ Cargar detalle automáticamente si hay un orden en la URL
+  useEffect(() => {
+    if (selectedOrderId && !selectedOrder) {
+      console.log('🔄 [useEffect] Detectado ordenId en URL:', selectedOrderId)
+      handleViewDetail(selectedOrderId)
+    }
+  }, [selectedOrderId])
+
+  const handleCloseModal = () => {
+    // ✅ Volver a la URL sin query params, manteniendo el scroll
+    router.push('/admin/sales-history', { scroll: false })
   }
 
   // =============================================================================
@@ -826,15 +837,35 @@ export default function SalesHistoryPage() {
       })()}
       
       {/* Modal de detalle de orden */}
-      <OrderDetailModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        order={selectedOrder}
-        onOrderUpdate={() => {
-          // Refrescar la lista de órdenes al actualizar el estado
-          loadOrders()
-        }}
-      />
+      {selectedOrder && (
+        <OrderDetailModal 
+          isOpen={!!selectedOrderId} 
+          onClose={handleCloseModal}
+          order={selectedOrder}
+          onOrderUpdate={() => {
+            // Refrescar la lista de órdenes al actualizar el estado
+            loadOrders()
+          }}
+        />
+      )}
     </div>
+  )
+}
+
+// ✅ Wrapper component con Suspense para permitir useSearchParams
+import { Suspense } from 'react'
+
+export default function SalesHistoryPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-yellow-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-800 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando historial de ventas...</p>
+        </div>
+      </div>
+    }>
+      <SalesHistoryContent />
+    </Suspense>
   )
 }
