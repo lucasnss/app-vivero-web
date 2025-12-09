@@ -18,6 +18,7 @@
     "test:image-hook": "vitest run src/__tests__/image/useImageUpload.test.ts --coverage",
     "test:image-integration": "vitest run src/__tests__/image/integration --coverage",
     "test:images": "vitest run src/__tests__/image --coverage",
+    "verify-mp-config": "node scripts/verify-mp-production-config.js",
     "test:images:full": "vitest run src/__tests__/image --coverage",
     "debug:webhook": "node scripts/debug-webhook-flow.js",
     "test:webhook": "node scripts/test-webhook-manually.js",
