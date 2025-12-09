@@ -222,3 +222,4 @@ Pero primero verifica:
 - [ ] Hiciste `vercel --prod` después de cambiar variables
 
 
+
