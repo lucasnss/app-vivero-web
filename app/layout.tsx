@@ -6,6 +6,8 @@ import ClientThemeProvider from "@/components/client-theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { ApiSetup } from "@/components/auth/ApiSetup"
+import { SWRConfig } from 'swr'
+import { swrConfig } from '@/lib/swr-config'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,11 +30,13 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen bg-background antialiased`}>
         <AuthProvider>
           <ClientThemeProvider>
-            <ApiSetup />
-            <main className="relative flex min-h-screen flex-col">
-              {children}
-            </main>
-            <Toaster />
+            <SWRConfig value={swrConfig}>
+              <ApiSetup />
+              <main className="relative flex min-h-screen flex-col">
+                {children}
+              </main>
+              <Toaster />
+            </SWRConfig>
           </ClientThemeProvider>
         </AuthProvider>
       </body>

@@ -110,7 +110,8 @@ export function validateMercadoPagoConfig(): void {
   // En producción, requerir configuración completa
   const requiredVars = [
     'MP_ACCESS_TOKEN',
-    'NEXT_PUBLIC_BASE_URL'
+    'NEXT_PUBLIC_BASE_URL',
+    'NODE_ENV'
   ]
   
   const missingVars = requiredVars.filter(varName => !process.env[varName])
@@ -133,3 +134,10 @@ export function validateMercadoPagoConfig(): void {
 
 // Validar configuración al importar el módulo
 validateMercadoPagoConfig()
+
+// ✅ Log de ambiente para debugging en Vercel logs
+if (typeof window === 'undefined') {
+  const env = process.env.NODE_ENV || 'unknown'
+  const isProduction = env === 'production'
+  console.log(`🌍 Ambiente detectado: ${isProduction ? '✅ PRODUCCIÓN' : '⚠️ DESARROLLO'} (NODE_ENV=${env})`)
+}

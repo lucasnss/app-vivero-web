@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react"
 import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from "lucide-react"
 import { cartService } from "@/services/cartService"
-import { productService } from "@/services/productService"
+import { useEnrichedCartProducts } from "@/lib/hooks/useCartProducts"
 import { CartItem } from "@/types/cartItem"
-import { Product } from "@/types/product"
 import {
   AlertDialog,
   AlertDialogContent,
@@ -19,50 +18,39 @@ import {
 import { useRouter } from "next/navigation"
 
 export default function CarritoPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
-  const [products, setProducts] = useState<(Product & { quantity: number; availableStock: number })[]>([])
-  const [loading, setLoading] = useState(true)
+  // ✅ Usar hook de SWR para productos (sin recargas innecesarias)
+  const { products, isLoading, mutate: refreshProducts } = useEnrichedCartProducts()
+  
+  const [cartRefreshTrigger, setCartRefreshTrigger] = useState(0)
   const [confirmDelete, setConfirmDelete] = useState<{ open: boolean, item: CartItem | null }>({ open: false, item: null })
   const [prevUrl, setPrevUrl] = useState<string | null>(null)
   const [envioDomicilio, setEnvioDomicilio] = useState(false)
   const router = useRouter();
 
+  // Cargar configuración inicial
   useEffect(() => {
     // Limpiar carrito de items inválidos
     cartService.cleanCart()
-    setCartItems(cartService.getCart().items)
-    // Suscribirse a cambios en el carrito
-    const handler = () => {
-      cartService.cleanCart()
-      setCartItems(cartService.getCart().items)
-    }
-    window.addEventListener("cart-updated", handler)
-    // Leer la URL anterior guardada usando la nueva función
+    
+    // Leer la URL anterior guardada
     const url = cartService.getPreviousUrl()
     if (url) setPrevUrl(url)
+    
     // Leer preferencia de envío guardada
     const savedEnvio = localStorage.getItem('envioDomicilio')
     if (savedEnvio) setEnvioDomicilio(savedEnvio === 'true')
-    return () => window.removeEventListener("cart-updated", handler)
   }, [])
 
+  // Escuchar cambios en el carrito (agregar/eliminar productos)
   useEffect(() => {
-    async function fetchProducts() {
-      setLoading(true)
-      const items = cartService.getCart().items
-      const prods: (Product & { quantity: number; availableStock: number })[] = []
-      for (const item of items) {
-        const prod = await productService.getProductById(item.product_id)
-        if (prod) {
-          const availableStock = await cartService.getAvailableStock(item.product_id)
-          prods.push({ ...prod, quantity: item.quantity, availableStock })
-        }
-      }
-      setProducts(prods)
-      setLoading(false)
+    const handler = () => {
+      cartService.cleanCart()
+      setCartRefreshTrigger(prev => prev + 1) // ✅ Forzar re-render sin recargar productos
+      refreshProducts() // ✅ Actualizar lista de productos si cambian los IDs
     }
-    fetchProducts()
-  }, [cartItems])
+    window.addEventListener("cart-updated", handler)
+    return () => window.removeEventListener("cart-updated", handler)
+  }, [refreshProducts])
 
   useEffect(() => {
     // Guardar preferencia de envío cada vez que cambia
@@ -72,25 +60,32 @@ export default function CarritoPage() {
   const total = products.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   const handleIncrement = async (id: string) => {
-    const item = cartItems.find(i => i.product_id === id)
     const product = products.find(p => p.id === id)
     
-    if (item && product && item.quantity < Math.min(15, product.availableStock + item.quantity)) {
-      cartService.updateCartItemQuantity(id, item.quantity + 1)
+    if (product && product.quantity < Math.min(15, product.stock)) {
+      // ✅ Actualizar solo localStorage, sin recargar productos
+      cartService.updateCartItemQuantity(id, product.quantity + 1)
     }
   }
 
   const handleDecrement = (id: string) => {
-    const item = cartItems.find(i => i.product_id === id)
-    if (item && item.quantity > 1) {
-      cartService.updateCartItemQuantity(id, item.quantity - 1)
+    const product = products.find(p => p.id === id)
+    if (product && product.quantity > 1) {
+      // ✅ Actualizar solo localStorage, sin recargar productos
+      cartService.updateCartItemQuantity(id, product.quantity - 1)
     }
   }
 
   const handleRemove = (id: string) => {
-    const item = cartItems.find(i => i.product_id === id)
-    if (item) {
-      setConfirmDelete({ open: true, item })
+    const product = products.find(p => p.id === id)
+    if (product) {
+      // Crear un CartItem temporal para el modal de confirmación
+      const tempCartItem: CartItem = {
+        product_id: id,
+        quantity: product.quantity,
+        price: product.price
+      }
+      setConfirmDelete({ open: true, item: tempCartItem })
     }
   }
 
@@ -136,7 +131,7 @@ export default function CarritoPage() {
       {/* Carrito Content */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          {loading ? (
+          {isLoading ? (
             <div className="text-center py-12 text-green-700">Cargando productos del carrito...</div>
           ) : products.length > 0 ? (
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -167,8 +162,8 @@ export default function CarritoPage() {
                         <button 
                           className="p-1 rounded-full bg-gray-100 hover:bg-gray-200" 
                           onClick={() => handleIncrement(item.id)} 
-                          disabled={item.quantity >= Math.min(15, item.availableStock + item.quantity)}
-                          title={item.quantity >= Math.min(15, item.availableStock + item.quantity) ? "No hay más stock disponible" : "Agregar una unidad"}
+                          disabled={item.quantity >= Math.min(15, item.stock)}
+                          title={item.quantity >= Math.min(15, item.stock) ? "No hay más stock disponible" : "Agregar una unidad"}
                         >
                           <Plus className="h-4 w-4" />
                         </button>

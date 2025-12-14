@@ -38,7 +38,7 @@ export default function CategoriesSection() {
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300">
+    <section id="categorias-section" className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold text-center text-green-800 mb-12">Explora por Categorías</h2>
 

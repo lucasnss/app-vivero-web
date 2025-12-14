@@ -49,12 +49,14 @@ export default function AdminPage() {
   const [search, setSearch] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("")
   const [page, setPage] = useState(1)
-  const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null)
+  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formChanged, setFormChanged] = useState(false)
   const [initialForm, setInitialForm] = useState<Omit<Product, 'id'>>(emptyProduct)
   const [isDeleting, setIsDeleting] = useState(false) // Estado para controlar si estamos eliminando una imagen
   const [showExcelUpload, setShowExcelUpload] = useState(false) // Estado para controlar el modal de importación
+  const [outOfStockFilter, setOutOfStockFilter] = useState(false) // Filtro para productos sin stock
+  const [lowStockFilter, setLowStockFilter] = useState(false) // Filtro para productos con stock bajo
   const pageSize = 10
 
   // Redirigir a login si no hay autenticación después de cargar
@@ -63,7 +65,7 @@ export default function AdminPage() {
     if (!authLoading) {
       hasCheckedAuth.current = true
     }
-    
+
     // ⏱️ Solo redirigir si YA verificamos Y no hay usuario
     if (hasCheckedAuth.current && !authLoading && !user) {
       // Dar 2000ms (2 segundos) para asegurar que el contexto terminó de cargar
@@ -74,7 +76,7 @@ export default function AdminPage() {
         // ✅ Usar window.location.href en lugar de router.push() para producción
         window.location.href = '/login?returnUrl=/admin'
       }, 2000) // Aumentado de 500ms a 2000ms
-      
+
       return () => clearTimeout(timeoutId)
     }
   }, [authLoading, user])
@@ -152,11 +154,11 @@ export default function AdminPage() {
         getAllProducts(true), // Incluir productos sin stock
         getAllCategories()
       ])
-      
+
       // Ambas funciones ya retornan arrays directamente
       setProducts(Array.isArray(productsResponse) ? productsResponse : [])
       setCategories(Array.isArray(categoriesData) ? categoriesData : [])
-      
+
     } catch (error) {
       console.error('Error fetching data:', error)
       setProducts([])
@@ -171,19 +173,19 @@ export default function AdminPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (isSubmitting) return // Prevenir doble envío
-    
+
     try {
       setIsSubmitting(true)
-      
+
       // Validar que haya al menos una imagen (nueva o existente)
       const totalImages = imageState.totalImages
       if (totalImages === 0) {
         showNotification('error', 'Debe agregar al menos una imagen al producto')
         return
       }
-      
+
       // Validar imágenes nuevas si las hay
       if (imageState.images.length > 0) {
         const isValid = await imageActions.validateAll()
@@ -192,7 +194,7 @@ export default function AdminPage() {
           return
         }
       }
-      
+
       // Subir imágenes nuevas si las hay
       let newImageUrls: string[] = []
       if (imageState.images.length > 0) {
@@ -206,18 +208,18 @@ export default function AdminPage() {
           return
         }
       }
-      
+
       // Combinar URLs existentes con nuevas
       const existingUrls = imageState.existingImages.map(img => img.url)
       const allImageUrls = [...existingUrls, ...newImageUrls]
-      
+
       // Preparar datos del producto con imágenes
       const productData = {
         ...form,
         image: allImageUrls[0] || form.image, // Primera imagen como principal
         images: allImageUrls.length > 0 ? allImageUrls : (form.images || [])
       }
-      
+
       // Guardar producto
       if (editing) {
         await updateProduct(editing.id, productData)
@@ -225,20 +227,20 @@ export default function AdminPage() {
       } else {
         const newProduct = await createProduct(productData)
         showNotification('success', `Producto creado exitosamente con ${allImageUrls.length} imagen(es)`)
-        
+
         // Si había un folder temporal, renombrarlo al ID real
         if (newImageUrls.length > 0 && newProduct && typeof newProduct === 'object' && 'id' in newProduct) {
           console.log('🔄 Producto creado con ID:', newProduct.id)
         }
       }
-      
+
       // Limpiar estado
       handleCloseForm()
       fetchData()
-      
+
       // Marcar el formulario como no cambiado después de guardar exitosamente
       setFormChanged(false)
-      
+
     } catch (error) {
       console.error('Error saving product:', error)
       showNotification('error', `Error al ${editing ? 'actualizar' : 'crear'} el producto`)
@@ -263,7 +265,7 @@ export default function AdminPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
     setFormChanged(true) // Marcar que el formulario ha cambiado
-    
+
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked
       setForm(f => ({ ...f, [name]: checked }))
@@ -299,10 +301,10 @@ export default function AdminPage() {
     setForm(rest)
     setInitialForm(rest)
     setFormChanged(false)
-    
+
     // Configurar imágenes existentes
     const existingImages: ImagePreviewType[] = []
-    
+
     // Agregar imagen principal si existe
     if (product.image && product.image !== '') {
       existingImages.push({
@@ -311,7 +313,7 @@ export default function AdminPage() {
         order: 0
       })
     }
-    
+
     // Agregar imágenes adicionales si existen
     if (product.images && Array.isArray(product.images)) {
       product.images.forEach((imageUrl, index) => {
@@ -325,13 +327,13 @@ export default function AdminPage() {
         }
       })
     }
-    
+
     // Configurar estado de imágenes
     imageActions.resetState()
     if (existingImages.length > 0) {
       imageActions.setExistingImages(existingImages)
     }
-    
+
     setShowForm(true)
   }
 
@@ -345,17 +347,17 @@ export default function AdminPage() {
       console.log('No se cerrará el formulario porque hay una operación de eliminación en curso');
       return;
     }
-    
+
     // Verificar si hay cambios reales en el formulario o imágenes
     // Solo se considera "cambiado" si:
     // 1. Se modificaron campos del formulario (formChanged = true)
     // 2. Se agregaron nuevas imágenes (imageState.images.length > 0)
     // 3. Se modificó el número de imágenes existentes (comparando con el estado original)
     const hasFormChanges = formChanged
-    const hasImageChanges = imageState.images.length > 0 || 
-                           imageState.existingImages.length !== (editing ? 
-                             (editing.image ? 1 : 0) + (editing.images?.length || 0) : 0)
-    
+    const hasImageChanges = imageState.images.length > 0 ||
+      imageState.existingImages.length !== (editing ?
+        (editing.image ? 1 : 0) + (editing.images?.length || 0) : 0)
+
     if (hasFormChanges || hasImageChanges) {
       const shouldClose = window.confirm('¿Salir sin guardar los cambios?')
       if (shouldClose) {
@@ -365,14 +367,14 @@ export default function AdminPage() {
       handleCloseForm()
     }
   }
-  
+
   const handleCloseForm = () => {
     // Si estamos en medio de una operación de eliminación de imagen, no cerrar el formulario
     if (isDeleting) {
       console.log('No se cerrará el formulario porque hay una operación de eliminación en curso');
       return;
     }
-    
+
     console.log('Cerrando formulario...');
     setShowForm(false)
     setEditing(null)
@@ -394,13 +396,13 @@ export default function AdminPage() {
   const handleExcelDataProcessed = async (data: Partial<Product>[]) => {
     try {
       console.log(`🚀 Iniciando importación de ${data.length} productos en paralelo...`)
-      
+
       // Transformar datos a formato Product
       const productsToCreate: Omit<Product, 'id'>[] = data.map((productData) => ({
         // Campos obligatorios
         name: String(productData.name || ''),
         price: Number(productData.price || 0),
-        
+
         // Campos opcionales con valores por defecto
         description: productData.description ? String(productData.description) : '',
         category_id: productData.category_id ? String(productData.category_id) : '',
@@ -410,30 +412,30 @@ export default function AdminPage() {
         characteristics: productData.characteristics ? String(productData.characteristics) : '',
         origin: productData.origin ? String(productData.origin) : '',
         image: productData.image ? String(productData.image) : '',
-        images: productData.images 
-          ? (typeof productData.images === 'string' 
-              ? String(productData.images).split(',').map(url => url.trim()).filter(url => url)
-              : Array.isArray(productData.images) 
-                ? productData.images 
-                : [])
+        images: productData.images
+          ? (typeof productData.images === 'string'
+            ? String(productData.images).split(',').map(url => url.trim()).filter(url => url)
+            : Array.isArray(productData.images)
+              ? productData.images
+              : [])
           : [],
         featured: (() => {
           const featured = productData.featured
           if (featured === true) return true
           if (!featured) return false
           const featuredStr = String(featured).toLowerCase()
-          return featuredStr === 'true' || featuredStr === '1' || 
-                 featuredStr === 'sí' || featuredStr === 'si' || featuredStr === 'yes'
+          return featuredStr === 'true' || featuredStr === '1' ||
+            featuredStr === 'sí' || featuredStr === 'si' || featuredStr === 'yes'
         })()
       }))
 
       // Importar todos los productos EN PARALELO usando Promise.allSettled
-      const promises = productsToCreate.map((productData, index) => 
+      const promises = productsToCreate.map((productData, index) =>
         createProduct(productData)
           .then(() => ({ success: true, index, name: productData.name }))
-          .catch((error) => ({ 
-            success: false, 
-            index, 
+          .catch((error) => ({
+            success: false,
+            index,
             name: productData.name,
             error: error instanceof Error ? error.message : 'Error desconocido'
           }))
@@ -471,9 +473,11 @@ export default function AdminPage() {
   // Filtrar productos
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase()) ||
-                         product.description.toLowerCase().includes(search.toLowerCase())
+      product.description.toLowerCase().includes(search.toLowerCase())
     const matchesCategory = !categoryFilter || product.category_id === categoryFilter
-    return matchesSearch && matchesCategory
+    const matchesOutOfStock = !outOfStockFilter || product.stock === 0
+    const matchesLowStock = !lowStockFilter || (product.stock > 0 && product.stock <= 5)
+    return matchesSearch && matchesCategory && matchesOutOfStock && matchesLowStock
   })
 
   // Paginación
@@ -503,554 +507,574 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-        {/* Notificación */}
-        {notification && (
-          <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
-            notification.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+      {/* Notificación */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${notification.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
           }`}>
-            <div className="flex items-center space-x-2">
-              {notification.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
-              <span>{notification.message}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Header con información del usuario */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <button onClick={() => window.location.href = "/"} className="flex items-center text-green-900 font-semibold py-2 px-4 rounded hover:bg-green-100">
-              <Home className="h-5 w-5 mr-2" /> Inicio
-            </button>
-            <h1 className="text-3xl font-bold">Panel de Administración</h1>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {/* Botón de menú de usuario */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Panel de Administrador
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-2 py-1.5">
-                  <p className="text-sm font-medium">{user?.name}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Administrador
-                  </p>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => window.location.href = '/admin/sales-history'}>
-                  <TreePine className="h-4 w-4 mr-2" />
-                  Historial
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => window.location.href = '/admin'}>
-                  <Shield className="h-4 w-4 mr-2" />
-                  Panel de Administrador
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Cerrar Sesión
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex items-center space-x-2">
+            {notification.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
+            <span>{notification.message}</span>
           </div>
         </div>
+      )}
 
-        {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="flex items-center">
-              <Package className="h-8 w-8 text-blue-600" />
-              <div className="ml-4">
-                <h3 className="text-sm font-medium text-gray-500">Total Productos</h3>
-                <p className="text-xl font-bold text-gray-900">{totalProducts}</p>
+      {/* Header con información del usuario */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => window.location.href = "/"} className="flex items-center text-green-900 font-semibold py-2 px-4 rounded hover:bg-green-100">
+            <Home className="h-5 w-5 mr-2" /> Inicio
+          </button>
+          <h1 className="text-3xl font-bold">Panel de Administración</h1>
+        </div>
+
+        <div className="flex items-center gap-4">
+          {/* Botón de menú de usuario */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Panel de Administrador
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-2 py-1.5">
+                <p className="text-sm font-medium">{user?.name}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+                <p className="text-xs text-muted-foreground">
+                  Administrador
+                </p>
               </div>
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="flex items-center">
-              <TrendingUp className="h-8 w-8 text-green-600" />
-              <div className="ml-4">
-                <h3 className="text-sm font-medium text-gray-500">Valor Total</h3>
-                <p className="text-xl font-bold text-gray-900">${totalValue.toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="flex items-center">
-              <AlertTriangle className="h-8 w-8 text-orange-600" />
-              <div className="ml-4">
-                <h3 className="text-sm font-medium text-gray-500">Stock Bajo</h3>
-                <p className="text-xl font-bold text-gray-900">{lowStockProducts}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="flex items-center">
-              <AlertTriangle className="h-8 w-8 text-red-600" />
-              <div className="ml-4">
-                <h3 className="text-sm font-medium text-gray-500">Sin Stock</h3>
-                <p className="text-xl font-bold text-gray-900">{outOfStockProducts}</p>
-              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => window.location.href = '/admin/sales-history'}>
+                <TreePine className="h-4 w-4 mr-2" />
+                Historial
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.location.href = '/admin'}>
+                <Shield className="h-4 w-4 mr-2" />
+                Panel de Administrador
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Cerrar Sesión
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Estadísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="flex items-center">
+            <Package className="h-8 w-8 text-blue-600" />
+            <div className="ml-4">
+              <h3 className="text-sm font-medium text-gray-500">Total Productos</h3>
+              <p className="text-xl font-bold text-gray-900">{totalProducts}</p>
             </div>
           </div>
         </div>
 
-        {/* Controles */}
-        <div className="bg-white p-4 rounded-lg shadow mb-6">
-          <div className="flex flex-wrap gap-4 items-center justify-between">
-            <div className="flex flex-wrap gap-4">
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="flex items-center">
+            <TrendingUp className="h-8 w-8 text-green-600" />
+            <div className="ml-4">
+              <h3 className="text-sm font-medium text-gray-500">Valor Total</h3>
+              <p className="text-xl font-bold text-gray-900">${totalValue.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="flex items-center">
+            <AlertTriangle className="h-8 w-8 text-orange-600" />
+            <div className="ml-4">
+              <h3 className="text-sm font-medium text-gray-500">Stock Bajo</h3>
+              <p className="text-xl font-bold text-gray-900">{lowStockProducts}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="flex items-center">
+            <AlertTriangle className="h-8 w-8 text-red-600" />
+            <div className="ml-4">
+              <h3 className="text-sm font-medium text-gray-500">Sin Stock</h3>
+              <p className="text-xl font-bold text-gray-900">{outOfStockProducts}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Controles */}
+      <div className="bg-white p-4 rounded-lg shadow mb-6">
+        <div className="flex flex-wrap gap-4 items-center justify-between">
+          <div className="flex flex-wrap gap-4">
+            <input
+              type="text"
+              placeholder="Buscar productos..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="px-3 py-2 border rounded-md"
+            />
+
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="px-3 py-2 border rounded-md"
+            >
+              <option value="">Todas las categorías</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+
+            {/* Filtro: Productos sin stock */}
+            <label className="flex items-center space-x-2 cursor-pointer">
               <input
-                type="text"
-                placeholder="Buscar productos..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="px-3 py-2 border rounded-md"
+                type="checkbox"
+                checked={outOfStockFilter}
+                onChange={(e) => setOutOfStockFilter(e.target.checked)}
+                className="rounded border-gray-300 text-red-600 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50"
               />
-              
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-2 border rounded-md"
-              >
-                <option value="">Todas las categorías</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowExcelUpload(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded flex items-center"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Importar desde Excel
-              </button>
-              <button
-                onClick={openAdd}
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded flex items-center"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Agregar Producto
-              </button>
-            </div>
+              <span className="text-sm text-gray-600">Sin stock</span>
+            </label>
+
+            {/* Filtro: Productos con stock bajo */}
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={lowStockFilter}
+                onChange={(e) => setLowStockFilter(e.target.checked)}
+                className="rounded border-gray-300 text-orange-500 shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50"
+              />
+              <span className="text-sm text-gray-600">Stock bajo</span>
+            </label>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowExcelUpload(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded flex items-center"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Importar desde Excel
+            </button>
+            <button
+              onClick={openAdd}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded flex items-center"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Agregar Producto
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Tabla de productos */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {paginatedProducts.map((product) => (
-                <tr key={product.id}>
-                  <td className="px-4 py-3">
-                    <img
-                      src={product.image || PLACEHOLDER_IMAGE}
-                      alt={product.name}
-                      className="h-16 w-16 object-cover rounded"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE
-                      }}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                    <div className="text-sm text-gray-500">{product.scientificName}</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm text-gray-900">
-                      {categories.find(cat => cat.id === product.category_id)?.name || 'Sin categoría'}
+      {/* Tabla de productos */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <table className="min-w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {paginatedProducts.map((product) => (
+              <tr key={product.id}>
+                <td className="px-4 py-3">
+                  <img
+                    src={product.image || PLACEHOLDER_IMAGE}
+                    alt={product.name}
+                    className="h-16 w-16 object-cover rounded"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE
+                    }}
+                  />
+                </td>
+                <td className="px-4 py-3">
+                  <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                  <div className="text-sm text-gray-500">{product.scientificName}</div>
+                </td>
+                <td className="px-4 py-3">
+                  <span className="text-sm text-gray-900">
+                    {categories.find(cat => cat.id === product.category_id)?.name || 'Sin categoría'}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  <span className="text-sm font-medium text-gray-900">${product.price}</span>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-col space-y-1">
+                    <span className="text-sm font-medium text-gray-900">
+                      {product.stock} unidades
                     </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm font-medium text-gray-900">${product.price}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col space-y-1">
-                      <span className="text-sm font-medium text-gray-900">
-                        {product.stock} unidades
-                      </span>
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
-                        product.stock === 0 ? 'bg-red-100 text-red-800' :
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${product.stock === 0 ? 'bg-red-100 text-red-800' :
                         product.stock <= 5 ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'
                       }`}>
-                        {product.stock === 0 ? 'Sin stock' :
-                         product.stock <= 5 ? 'Stock bajo' : 'En stock'}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex space-x-2">
-                      <button 
-                        onClick={() => openEdit(product)} 
-                        className="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-semibold py-1 px-3 rounded text-sm"
-                      >
-                        Editar
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(product.id)} 
-                        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded text-sm"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      {product.stock === 0 ? 'Sin stock' :
+                        product.stock <= 5 ? 'Stock bajo' : 'En stock'}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => openEdit(product)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-semibold py-1 px-3 rounded text-sm"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded text-sm"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        {/* Paginación */}
-        <div className="flex justify-center items-center gap-2 mt-4">
-          <button
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-          >Anterior</button>
-          <span>Página {page} de {totalPages}</span>
-          <button
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-          >Siguiente</button>
-        </div>
+      {/* Paginación */}
+      <div className="flex justify-center items-center gap-2 mt-4">
+        <button
+          onClick={() => setPage(p => Math.max(1, p - 1))}
+          disabled={page === 1}
+          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+        >Anterior</button>
+        <span>Página {page} de {totalPages}</span>
+        <button
+          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages}
+          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+        >Siguiente</button>
+      </div>
 
-        {/* Modal de formulario */}
-        {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-bold">
-                    {editing ? 'Editar Producto' : 'Agregar Producto'}
-                  </h2>
-                  <button
-                    onClick={confirmCloseForm}
-                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                    aria-label="Cerrar formulario"
-                  >
-                    <X className="h-6 w-6" />
-                  </button>
-                </div>
-                
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-md"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Nombre Científico</label>
-                      <input
-                        type="text"
-                        name="scientificName"
-                        value={form.scientificName}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-md"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
+      {/* Modal de formulario */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">
+                  {editing ? 'Editar Producto' : 'Agregar Producto'}
+                </h2>
+                <button
+                  onClick={confirmCloseForm}
+                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                  aria-label="Cerrar formulario"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                    <textarea
-                      name="description"
-                      value={form.description}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border rounded-md"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-                      <select
-                        name="category_id"
-                        value={form.category_id}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-md"
-                        required
-                      >
-                        <option value="">Seleccionar categoría</option>
-                        {categories.map(cat => (
-                          <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Precio</label>
-                      <input
-                        type="number"
-                        name="price"
-                        value={form.price || ''}
-                        onChange={handleChange}
-                        step="0.01"
-                        min="0"
-                        className="w-full px-3 py-2 border rounded-md"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                      <input
-                        type="number"
-                        name="stock"
-                        value={form.stock || ''}
-                        onChange={handleChange}
-                        min="0"
-                        className="w-full px-3 py-2 border rounded-md"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <ImageIcon className="inline w-4 h-4 mr-2" />
-                      Imágenes del Producto
-                    </label>
-                    <div className="space-y-4">
-                      {/* Mostrar imágenes existentes */}
-                      {imageState.existingImages.length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600 mb-2">
-                            Imágenes actuales ({imageState.existingImages.length}/3)
-                          </h4>
-                          <ImagePreview
-                            images={imageState.existingImages}
-                            onDelete={handleImageDelete}
-                            onReorder={handleImageReorder}
-                            onSetMain={handleSetMainImage}
-                          />
-                        </div>
-                      )}
-                      
-                      {/* Subidor de nuevas imágenes */}
-                      {imageState.totalImages < 3 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600 mb-2">
-                            {imageState.existingImages.length > 0 
-                              ? `Agregar más imágenes (${3 - imageState.totalImages} restantes)`
-                              : 'Agregar imágenes (máximo 3)'
-                            }
-                          </h4>
-                          <AdvancedImageUploader
-                            maxImages={3 - imageState.totalImages}
-                            onImagesChange={handleImagesChange}
-                            disabled={isSubmitting || imageState.uploading}
-                          />
-                        </div>
-                      )}
-                      
-                      {/* Lista de imágenes pendientes de subir */}
-                      {imageState.images.length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-600 mb-2">
-                            Imágenes pendientes de subir ({imageState.images.length})
-                          </h4>
-                          <div className="space-y-2">
-                            {imageState.images.map((image, index) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-md">
-                                <div className="flex items-center gap-3">
-                                  <img 
-                                    src={image.preview} 
-                                    alt={`Preview ${index + 1}`}
-                                    className="w-12 h-12 object-cover rounded border"
-                                  />
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-900">{image.file.name}</p>
-                                    <p className="text-xs text-gray-500">
-                                      {(image.file.size / 1024 / 1024).toFixed(2)} MB
-                                    </p>
-                                    {image.error && (
-                                      <p className="text-xs text-red-600 mt-1">{image.error}</p>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {image.uploading && (
-                                    <div className="flex items-center gap-2 text-blue-600 text-sm">
-                                      <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                                      Subiendo...
-                                    </div>
-                                  )}
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      try {
-                                        // Marcar que estamos en proceso de modificación
-                                        setIsDeleting(true);
-                                        
-                                        // Eliminar la imagen
-                                        imageActions.removeImage(index)
-                                      } finally {
-                                        // Marcar que hemos terminado
-                                        setIsDeleting(false);
-                                      }
-                                    }}
-                                    disabled={image.uploading || isSubmitting}
-                                    className="px-3 py-1 text-sm text-red-600 hover:text-red-800 disabled:opacity-50"
-                                  >
-                                    Eliminar
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Estado e información */}
-                      <div className="text-sm text-gray-600">
-                        <p>Total de imágenes: {imageState.totalImages}/3</p>
-                        {imageState.uploading && (
-                          <p className="text-blue-600 font-medium mt-1">
-                            <Upload className="inline w-4 h-4 mr-1" />
-                            Subiendo imágenes... {imageState.uploadProgress}%
-                          </p>
-                        )}
-                      </div>
-                      
-                      {/* Errores de imágenes */}
-                      {imageState.errors.length > 0 && (
-                        <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                          <h5 className="text-sm font-medium text-red-800 mb-1">Errores en imágenes:</h5>
-                          <ul className="text-sm text-red-700 list-disc list-inside">
-                            {imageState.errors.map((error, index) => (
-                              <li key={index}>{error}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {/* Advertencias */}
-                      {imageState.warnings.length > 0 && (
-                        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                          <h5 className="text-sm font-medium text-yellow-800 mb-1">Advertencias:</h5>
-                          <ul className="text-sm text-yellow-700 list-disc list-inside">
-                            {imageState.warnings.map((warning, index) => (
-                              <li key={index}>{warning}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Cuidados</label>
-                    <textarea
-                      name="care"
-                      value={form.care}
-                      onChange={handleChange}
-                      rows={2}
-                      className="w-full px-3 py-2 border rounded-md"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Características</label>
-                    <textarea
-                      name="characteristics"
-                      value={form.characteristics}
-                      onChange={handleChange}
-                      rows={2}
-                      className="w-full px-3 py-2 border rounded-md"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Origen</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
                     <input
                       type="text"
-                      name="origin"
-                      value={form.origin}
+                      name="name"
+                      value={form.name}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-md"
                       required
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="featured"
-                        checked={form.featured}
-                        onChange={handleChange}
-                        className="mr-2"
-                      />
-                      Producto destacado
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre Científico</label>
+                    <input
+                      type="text"
+                      name="scientificName"
+                      value={form.scientificName}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border rounded-md"
+                      required
+                    />
                   </div>
-                  
-                  <div className="flex justify-end space-x-2 pt-4 border-t">
-                    <button type="button" onClick={confirmCloseForm} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">Cancelar</button>
-                    <button 
-                  type="submit" 
-                  disabled={isSubmitting || imageState.uploading || (imageState.totalImages === 0)}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded flex items-center gap-2"
-                >
-                  {isSubmitting || imageState.uploading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      {imageState.uploading ? 'Subiendo imágenes...' : 'Guardando...'}
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      {editing ? 'Actualizar Producto' : 'Crear Producto'}
-                    </>
-                  )}
-                </button>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                  <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+                    <select
+                      name="category_id"
+                      value={form.category_id}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border rounded-md"
+                      required
+                    >
+                      <option value="">Seleccionar categoría</option>
+                      {categories.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
                   </div>
-                </form>
-              </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Precio</label>
+                    <input
+                      type="number"
+                      name="price"
+                      value={form.price || ''}
+                      onChange={handleChange}
+                      step="0.01"
+                      min="0"
+                      className="w-full px-3 py-2 border rounded-md"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                    <input
+                      type="number"
+                      name="stock"
+                      value={form.stock !== undefined && form.stock !== null ? form.stock : ''}
+                      onChange={handleChange}
+                      min="0"
+                      className="w-full px-3 py-2 border rounded-md"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <ImageIcon className="inline w-4 h-4 mr-2" />
+                    Imágenes del Producto
+                  </label>
+                  <div className="space-y-4">
+                    {/* Mostrar imágenes existentes */}
+                    {imageState.existingImages.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">
+                          Imágenes actuales ({imageState.existingImages.length}/3)
+                        </h4>
+                        <ImagePreview
+                          images={imageState.existingImages}
+                          onDelete={handleImageDelete}
+                          onReorder={handleImageReorder}
+                          onSetMain={handleSetMainImage}
+                        />
+                      </div>
+                    )}
+
+                    {/* Subidor de nuevas imágenes */}
+                    {imageState.totalImages < 3 && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">
+                          {imageState.existingImages.length > 0
+                            ? `Agregar más imágenes (${3 - imageState.totalImages} restantes)`
+                            : 'Agregar imágenes (máximo 3)'
+                          }
+                        </h4>
+                        <AdvancedImageUploader
+                          maxImages={3 - imageState.totalImages}
+                          onImagesChange={handleImagesChange}
+                          disabled={isSubmitting || imageState.uploading}
+                        />
+                      </div>
+                    )}
+
+                    {/* Lista de imágenes pendientes de subir */}
+                    {imageState.images.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">
+                          Imágenes pendientes de subir ({imageState.images.length})
+                        </h4>
+                        <div className="space-y-2">
+                          {imageState.images.map((image, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-md">
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={image.preview}
+                                  alt={`Preview ${index + 1}`}
+                                  className="w-12 h-12 object-cover rounded border"
+                                />
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">{image.file.name}</p>
+                                  <p className="text-xs text-gray-500">
+                                    {(image.file.size / 1024 / 1024).toFixed(2)} MB
+                                  </p>
+                                  {image.error && (
+                                    <p className="text-xs text-red-600 mt-1">{image.error}</p>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {image.uploading && (
+                                  <div className="flex items-center gap-2 text-blue-600 text-sm">
+                                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                    Subiendo...
+                                  </div>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    try {
+                                      // Marcar que estamos en proceso de modificación
+                                      setIsDeleting(true);
+
+                                      // Eliminar la imagen
+                                      imageActions.removeImage(index)
+                                    } finally {
+                                      // Marcar que hemos terminado
+                                      setIsDeleting(false);
+                                    }
+                                  }}
+                                  disabled={image.uploading || isSubmitting}
+                                  className="px-3 py-1 text-sm text-red-600 hover:text-red-800 disabled:opacity-50"
+                                >
+                                  Eliminar
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Estado e información */}
+                    <div className="text-sm text-gray-600">
+                      <p>Total de imágenes: {imageState.totalImages}/3</p>
+                      {imageState.uploading && (
+                        <p className="text-blue-600 font-medium mt-1">
+                          <Upload className="inline w-4 h-4 mr-1" />
+                          Subiendo imágenes... {imageState.uploadProgress}%
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Errores de imágenes */}
+                    {imageState.errors.length > 0 && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                        <h5 className="text-sm font-medium text-red-800 mb-1">Errores en imágenes:</h5>
+                        <ul className="text-sm text-red-700 list-disc list-inside">
+                          {imageState.errors.map((error, index) => (
+                            <li key={index}>{error}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Advertencias */}
+                    {imageState.warnings.length > 0 && (
+                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                        <h5 className="text-sm font-medium text-yellow-800 mb-1">Advertencias:</h5>
+                        <ul className="text-sm text-yellow-700 list-disc list-inside">
+                          {imageState.warnings.map((warning, index) => (
+                            <li key={index}>{warning}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Cuidados</label>
+                  <textarea
+                    name="care"
+                    value={form.care}
+                    onChange={handleChange}
+                    rows={2}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Características</label>
+                  <textarea
+                    name="characteristics"
+                    value={form.characteristics}
+                    onChange={handleChange}
+                    rows={2}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Origen</label>
+                  <input
+                    type="text"
+                    name="origin"
+                    value={form.origin}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="featured"
+                      checked={form.featured}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    Producto destacado
+                  </label>
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-4 border-t">
+                  <button type="button" onClick={confirmCloseForm} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">Cancelar</button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || imageState.uploading || (imageState.totalImages === 0)}
+                    className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded flex items-center gap-2"
+                  >
+                    {isSubmitting || imageState.uploading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        {imageState.uploading ? 'Subiendo imágenes...' : 'Guardando...'}
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        {editing ? 'Actualizar Producto' : 'Crear Producto'}
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Modal de importación de Excel */}
-        <ExcelUploadDialog
-          isOpen={showExcelUpload}
-          onClose={() => setShowExcelUpload(false)}
-          onDataProcessed={handleExcelDataProcessed}
-        />
+      {/* Modal de importación de Excel */}
+      <ExcelUploadDialog
+        isOpen={showExcelUpload}
+        onClose={() => setShowExcelUpload(false)}
+        onDataProcessed={handleExcelDataProcessed}
+      />
     </div>
   )
 } 
