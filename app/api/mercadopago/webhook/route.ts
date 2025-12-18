@@ -4,6 +4,7 @@ import { orderService } from '@/services/orderService'
 import { logService } from '@/services/logService'
 import { WebhookNotification } from '@/types/order'
 import { supabase } from '@/lib/supabaseClient'
+import { validateMercadoPagoSignature } from '@/lib/mercadopagoSignature'
 
 // Forzar renderizado dinámico para evitar errores en producción con headers
 export const dynamic = "force-dynamic"
@@ -42,7 +43,58 @@ function markPaymentAsProcessing(paymentId: string): void {
  * Recibir notificaciones de webhook de Mercado Pago
  */
 export async function POST(request: NextRequest) {
+  const startTime = Date.now()
+  
   try {
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    console.log('🔔 [WEBHOOK] Notificación recibida de MercadoPago')
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+
+    // ==========================================
+    // 🔐 PASO 1: VALIDAR FIRMA X-SIGNATURE (CRÍTICO)
+    // ==========================================
+    console.log('🔐 [WEBHOOK] Validando firma x-signature...')
+    
+    const isSignatureValid = await validateMercadoPagoSignature(request)
+
+    if (!isSignatureValid) {
+      console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+      console.error('🚨 [WEBHOOK] FIRMA INVÁLIDA - RECHAZANDO WEBHOOK')
+      console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+      
+      // Log del intento de ataque para auditoría
+      await logService.recordActivity({
+        action: 'webhook_signature_invalid',
+        entity_type: 'security',
+        entity_id: 'webhook_attack_attempt',
+        details: {
+          url: request.url,
+          headers: {
+            'x-signature': request.headers.get('x-signature'),
+            'x-request-id': request.headers.get('x-request-id'),
+            'user-agent': request.headers.get('user-agent'),
+          },
+          timestamp: new Date().toISOString(),
+          severity: 'error'
+        }
+      })
+
+      // Devolver 401 Unauthorized para notificaciones inválidas
+      return NextResponse.json(
+        { 
+          error: 'Invalid signature',
+          message: 'Webhook signature validation failed'
+        },
+        { status: 401 }
+      )
+    }
+
+    console.log('✅ [WEBHOOK] Firma validada correctamente')
+    console.log('')
+
+    // ==========================================
+    // 🔄 PASO 2: PROCESAR WEBHOOK (LÓGICA EXISTENTE)
+    // ==========================================
     const body = await request.json() as WebhookNotification
     
     // ✅ NUEVO: Parsear también query params (Mercado Pago a veces envía así)
@@ -329,39 +381,56 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    console.log('✅ Webhook procesado exitosamente:', {
-      order_id: order?.id,
-      payment_id: paymentInfo.payment_id,
-      status: paymentInfo.status
-    })
+    const processingTime = Date.now() - startTime
+    
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    console.log(`✅ [WEBHOOK] Procesamiento completado en ${processingTime}ms`)
+    console.log(`   Order ID: ${order?.id}`)
+    console.log(`   Payment ID: ${paymentInfo.payment_id}`)
+    console.log(`   Status: ${paymentInfo.status}`)
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
 
     return NextResponse.json({
       status: 'processed',
       order_id: order?.id,
-      payment_status: paymentInfo.status
+      payment_status: paymentInfo.status,
+      processing_time_ms: processingTime
     })
 
   } catch (error) {
-    console.error('❌ Error procesando webhook:', error)
+    const processingTime = Date.now() - startTime
+    
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    console.error(`❌ [WEBHOOK] Error después de ${processingTime}ms`)
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+    console.error('Error procesando webhook:', error)
 
-    // Log del error
+    // Log del error con stack trace
     await logService.recordActivity({
       action: 'error_webhook_processing',
       entity_type: 'mercadopago',
       entity_id: 'webhook_error',
       details: {
         error: error instanceof Error ? error.message : 'Error desconocido',
-        stack: error instanceof Error ? error.stack : undefined
+        stack: error instanceof Error ? error.stack : undefined,
+        processing_time_ms: processingTime
       }
     })
 
+    // ==========================================
+    // IMPORTANTE: Devolver 200 aunque falle
+    // ==========================================
+    // Para que MercadoPago no reintente indefinidamente
+    // El pago se procesará con el fallback en /pago/success
     return NextResponse.json(
       { 
-        error: 'Internal server error processing webhook',
+        status: 'acknowledged',
+        error: 'Processing failed, will retry via fallback',
+        processing_time_ms: processingTime,
         details: process.env.NODE_ENV === 'development' ? 
           (error instanceof Error ? error.message : 'Error desconocido') : undefined
       },
-      { status: 500 }
+      { status: 200 } // ← Devolver 200 para evitar reintentos excesivos de MP
     )
   }
 }
