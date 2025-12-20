@@ -29,7 +29,10 @@ export const mercadoPagoConfig = {
     success: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/success`,
     failure: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/failure`,
     pending: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/pending`,
-    notification: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/mercadopago/webhook`,
+    // ⚠️ TEMPORAL: Forzar URL principal para webhook (evitar problema de deployments múltiples)
+    notification: process.env.NODE_ENV === 'production' 
+      ? 'https://app-vivero-web.vercel.app/api/mercadopago/webhook'
+      : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/mercadopago/webhook`,
   },
   
   // Configuración del checkout
