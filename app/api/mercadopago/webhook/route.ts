@@ -332,6 +332,15 @@ export async function POST(request: NextRequest) {
 
     // Actualizar información de pago en la orden
     console.log('📝 Actualizando orden con información de pago...')
+    console.log('   Order ID:', order?.id)
+    console.log('   Payment Info:', {
+      payment_id: paymentInfo.payment_id,
+      status: paymentInfo.status,
+      payment_method_id: paymentInfo.payment_method_id,
+      payment_type_id: paymentInfo.payment_type_id,
+      payer_email: paymentInfo.payer_email,
+      date_approved: paymentInfo.date_approved
+    })
     
     // ✅ NUEVO: Verificar si ya existe una orden con este payment_id (para evitar duplicados)
     const existingOrderWithPaymentId = await orderService.getOrderByPaymentId(paymentInfo.payment_id)
