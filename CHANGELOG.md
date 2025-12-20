@@ -7,6 +7,85 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.2.0] - 2025-12-16
+
+### 🔒 Seguridad (CRÍTICO)
+
+- **Validación de Firma de Webhooks de MercadoPago**: Sistema de autenticación criptográfica para webhooks
+  - Implementada validación de firma `x-signature` según documentación oficial de MercadoPago
+  - Protección contra ataques de suplantación de identidad (spoofing)
+  - Validación HMAC SHA256 usando Secret Key de MercadoPago
+  - Protección anti-replay con validación de timestamp (tolerancia: 5 minutos)
+  - Rechazo automático de webhooks no autenticados (HTTP 401)
+  - Logs detallados de intentos de ataque para auditoría
+  - Comparación timing-safe de hashes (previene timing attacks)
+  - Integración completa con lógica existente del webhook
+
+### 🛡️ Vulnerabilidad Corregida
+
+- **CVE-CUSTOM-001**: Webhook sin autenticación permitía crear órdenes falsas
+  - **Severidad**: CRÍTICA
+  - **Vector de ataque**: POST request no autenticado a `/api/mercadopago/webhook`
+  - **Impacto**: Creación de órdenes fraudulentas, manipulación de stock, pérdidas económicas
+  - **Estado**: ✅ RESUELTO (código implementado, requiere configuración)
+  - **Fix**: Validación criptográfica obligatoria de firma x-signature
+  - **Requisitos**: 
+    - Configurar `MERCADOPAGO_WEBHOOK_SECRET` en `.env.local`
+    - Configurar `MERCADOPAGO_WEBHOOK_SECRET` en Vercel
+    - Obtener Secret Key desde dashboard de MercadoPago
+
+### 📄 Archivos Modificados
+
+- **Creados**:
+  - `src/lib/mercadopagoSignature.ts` - Validación de firma x-signature (180 líneas)
+  - Funciones: `validateMercadoPagoSignature()`, `validateAndParseNotification()`
+  
+- **Modificados**:
+  - `app/api/mercadopago/webhook/route.ts` - Integración de validación de firma
+    - Agregada validación al inicio del flujo
+    - Mantenida toda la lógica existente (datos temporales, detección TEST/REAL, etc.)
+    - Mejorados logs con separadores visuales y métricas de tiempo
+    - Agregado tracking de `processing_time_ms`
+  - `.gitignore` - Agregadas reglas para proteger archivos `.env*.local`
+
+### 📊 Mejoras de Seguridad
+
+- ✅ Solo MercadoPago puede enviar webhooks válidos
+- ✅ Protección contra replay attacks (validación de timestamp)
+- ✅ Validación criptográfica robusta (HMAC SHA256)
+- ✅ Timing-safe comparison (previene timing attacks)
+- ✅ Logs de intentos de ataque para monitoreo y auditoría
+- ✅ Cumple 100% con documentación oficial de MercadoPago
+- ✅ Compatible con funcionalidad existente (sin breaking changes)
+- ✅ Production-ready (requiere solo configurar Secret Key)
+
+### 🔧 Configuración Requerida
+
+**Antes de deploy a producción**:
+
+1. Obtener Secret Key de MercadoPago:
+   - Ir a: https://www.mercadopago.com.ar/developers/panel
+   - Seleccionar aplicación → Webhooks → Configurar notificaciones
+   - Copiar Secret Key del "Modo productivo"
+
+2. Configurar en desarrollo (`.env.local`):
+   ```bash
+   MERCADOPAGO_WEBHOOK_SECRET=tu_secret_key_aqui
+   ```
+
+3. Configurar en Vercel:
+   - Settings → Environment Variables
+   - Name: `MERCADOPAGO_WEBHOOK_SECRET`
+   - Value: La misma Secret Key
+   - Environments: Production, Preview, Development
+
+### 🔗 Referencias
+
+- [Documentación oficial MercadoPago - Webhooks](https://www.mercadopago.com.ar/developers/es/docs/your-integrations/notifications/webhooks)
+- [OWASP - Webhook Security](https://cheatsheetseries.owasp.org/cheatsheets/Webhook_Security_Cheat_Sheet.html)
+
+---
+
 ## [2.1.0] - 2025-12-04
 
 ### ✨ Agregado
