@@ -2,14 +2,34 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 # 📋 Tasks - ViveroWeb
 
 ## Estado General
-- **Versión**: 2.1.0
-- **Última actualización**: 2025-12-04
+- **Versión**: 2.2.0
+- **Última actualización**: 2025-12-16
 - **Estado del Build**: ✅ Exitoso (Exit code: 0)
-- **Listo para Deploy**: ✅ Sí
+- **Listo para Deploy**: ⚠️ Requiere configuración de Secret Key en Vercel
 
 ---
 
-## 🔴 FASE ACTUAL: CORRECCIONES CRÍTICAS Y MEJORAS DE UX
+## 🔴 FASE ACTUAL: SEGURIDAD Y MEJORAS CRÍTICAS
+
+### ✅ Completadas (2025-12-16)
+
+- [x] **Validación de Firma X-Signature de MercadoPago** (🔴 CRÍTICA - SEGURIDAD)
+  - [x] Creada función `validateMercadoPagoSignature()` en `src/lib/mercadopagoSignature.ts`
+  - [x] Implementada validación criptográfica HMAC SHA256
+  - [x] Webhook ahora valida firma antes de procesar
+  - [x] Rechaza webhooks no autenticados con HTTP 401
+  - [x] Protección anti-replay con validación de timestamp (máx 5 min)
+  - [x] Logs detallados para auditoría de seguridad
+  - [x] Actualizado `.gitignore` para incluir archivos `.env*.local`
+  - [x] Build exitoso sin errores
+  - [ ] **PENDIENTE**: Configurar variable `MERCADOPAGO_WEBHOOK_SECRET` en `.env.local`
+  - [ ] **PENDIENTE**: Configurar variable `MERCADOPAGO_WEBHOOK_SECRET` en Vercel
+  - **Archivos creados**: 
+    - `src/lib/mercadopagoSignature.ts` (validación de firma - 180 líneas)
+  - **Archivos modificados**: 
+    - `app/api/mercadopago/webhook/route.ts` (integración de validación)
+    - `.gitignore` (protección de variables de entorno)
+  - **Vulnerabilidad corregida**: Webhook vulnerable a suplantación de identidad
 
 ### ✅ Completadas (2025-12-04)
 

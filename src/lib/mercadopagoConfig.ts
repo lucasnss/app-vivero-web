@@ -26,10 +26,20 @@ export const mercadoPagoClient = new MercadoPagoConfig({
 export const mercadoPagoConfig = {
   // URLs de retorno (se configuran dinámicamente según el entorno)
   urls: {
-    success: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/success`,
-    failure: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/failure`,
-    pending: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/pending`,
-    notification: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/mercadopago/webhook`,
+    // ⚠️ IMPORTANTE: Usar URL principal de Vercel SIEMPRE en producción
+    // Evitar problemas con múltiples deployments (branches, preview, etc.)
+    success: process.env.NODE_ENV === 'production'
+      ? 'https://app-vivero-web.vercel.app/pago/success'
+      : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/success`,
+    failure: process.env.NODE_ENV === 'production'
+      ? 'https://app-vivero-web.vercel.app/pago/failure'
+      : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/failure`,
+    pending: process.env.NODE_ENV === 'production'
+      ? 'https://app-vivero-web.vercel.app/pago/pending'
+      : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/pago/pending`,
+    notification: process.env.NODE_ENV === 'production' 
+      ? 'https://app-vivero-web.vercel.app/api/mercadopago/webhook'
+      : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/mercadopago/webhook`,
   },
   
   // Configuración del checkout

@@ -464,8 +464,14 @@ export const orderService = {
         .single()
 
       if (error) {
-        console.error('Error updating payment info:', error)
-        throw new Error('Error al actualizar información de pago')
+        console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+        console.error('❌ [ORDER_SERVICE] Error updating payment info')
+        console.error('   Order ID:', orderId)
+        console.error('   Payment Data:', JSON.stringify(paymentData, null, 2))
+        console.error('   Update Data:', JSON.stringify(updateData, null, 2))
+        console.error('   Supabase Error:', JSON.stringify(error, null, 2))
+        console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+        throw new Error(`Error al actualizar información de pago: ${error.message || error.code || 'Unknown'}`)
       }
 
       // Registrar actividad
