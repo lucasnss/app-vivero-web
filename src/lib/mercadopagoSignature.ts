@@ -38,10 +38,18 @@ export async function validateMercadoPagoSignature(
     //    - Notificaciones de pago: ?data.id=XXX&type=payment
     //    - Notificaciones de merchant_order: ?id=XXX&topic=merchant_order
     const url = new URL(request.url);
-    const dataId = url.searchParams.get('data.id') || url.searchParams.get('id');
-    console.log(`🔍 Query param detectado: ${dataId}`);
+    const dataId = url.searchParams.get('data.id');
+    const id = url.searchParams.get('id');
+    const topic = url.searchParams.get('topic');
     
-    if (!dataId) {
+    // Detectar tipo de notificación
+    const isMerchantOrder = topic === 'merchant_order' && id;
+    const isPayment = dataId && !isMerchantOrder;
+    const notificationId = isMerchantOrder ? id : dataId;
+    
+    console.log(`🔍 Tipo de notificación: ${isMerchantOrder ? 'merchant_order' : (isPayment ? 'payment' : 'unknown')}, ID: ${notificationId}`);
+    
+    if (!notificationId) {
       console.error('❌ [MP_SIGNATURE] Query params data.id o id faltantes en URL:', request.url);
       return false;
     }
@@ -92,8 +100,13 @@ export async function validateMercadoPagoSignature(
     }
 
     // 6. Construir el manifest según documentación de MercadoPago
-    // Formato: id:{data.id};request-id:{x-request-id};ts:{ts};
-    const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
+    // Formato depende del tipo de notificación:
+    //   - payment: data.id:{id};request-id:{x-request-id};ts:{ts};
+    //   - merchant_order: id:{id};request-id:{x-request-id};ts:{ts};
+    const idPart = isMerchantOrder ? `id:${notificationId}` : `data.id:${notificationId}`;
+    const manifest = `${idPart};request-id:${xRequestId};ts:${ts};`;
+    
+    console.log(`📋 Manifest construido (${isMerchantOrder ? 'merchant_order' : 'payment'}): ${manifest}`);
 
     // 7. Calcular HMAC SHA256
     const hmac = crypto.createHmac('sha256', secret);
@@ -108,7 +121,7 @@ export async function validateMercadoPagoSignature(
 
     if (isValid) {
       console.log('✅ [MP_SIGNATURE] Firma de MercadoPago validada correctamente');
-      console.log('   data.id:', dataId);
+      console.log(`   ${isMerchantOrder ? 'id' : 'data.id'}:`, notificationId);
       console.log('   request-id:', xRequestId);
       return true;
     } else {
