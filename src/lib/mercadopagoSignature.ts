@@ -34,11 +34,15 @@ export async function validateMercadoPagoSignature(
     }
 
     // 3. Extraer query params de la URL
+    // ✅ Soporta ambos formatos: 
+    //    - Notificaciones de pago: ?data.id=XXX&type=payment
+    //    - Notificaciones de merchant_order: ?id=XXX&topic=merchant_order
     const url = new URL(request.url);
-    const dataId = url.searchParams.get('data.id');
+    const dataId = url.searchParams.get('data.id') || url.searchParams.get('id');
+    console.log(`🔍 Query param detectado: ${dataId}`);
     
     if (!dataId) {
-      console.error('❌ [MP_SIGNATURE] Query param data.id faltante en URL:', request.url);
+      console.error('❌ [MP_SIGNATURE] Query params data.id o id faltantes en URL:', request.url);
       return false;
     }
 
@@ -66,14 +70,15 @@ export async function validateMercadoPagoSignature(
     }
 
     // 5. Verificar que el timestamp no sea muy antiguo (prevenir replay attacks)
+    // ✅ Convertir timestamp de SEGUNDOS a MILISEGUNDOS (MercadoPago envía en segundos)
     const currentTimestamp = Date.now();
-    const messageTimestamp = parseInt(ts, 10);
+    const messageTimestamp = parseInt(ts, 10) * 1000;
     const timeDifference = Math.abs(currentTimestamp - messageTimestamp);
     
     // Permitir máximo 5 minutos de diferencia (300000 ms)
     if (timeDifference > 300000) {
       console.error('❌ [MP_SIGNATURE] Timestamp del webhook muy antiguo (posible replay attack)');
-      console.error('   Timestamp mensaje:', new Date(messageTimestamp).toISOString());
+      console.error('   Timestamp mensaje: ' + new Date(messageTimestamp).toISOString() + ' (ts=' + ts + ' segundos)');
       console.error('   Timestamp actual:', new Date(currentTimestamp).toISOString());
       console.error('   Diferencia (ms):', timeDifference);
       return false;

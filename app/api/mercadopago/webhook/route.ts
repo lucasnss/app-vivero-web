@@ -62,7 +62,12 @@ export async function POST(request: NextRequest) {
     console.log('   - x-request-id:', request.headers.get('x-request-id'))
     console.log('   - user-agent:', request.headers.get('user-agent'))
     console.log('   - content-type:', request.headers.get('content-type'))
-    console.log('📋 [DEBUG] Query params:', Object.fromEntries(request.nextUrl.searchParams))
+    const queryParams = Object.fromEntries(request.nextUrl.searchParams)
+    console.log('📋 [DEBUG] Query params:', queryParams)
+    
+    // ✅ Detectar tipo de notificación
+    const notificationType = queryParams['data.id'] ? 'payment' : (queryParams['id'] ? 'merchant_order' : 'unknown')
+    console.log('📋 [DEBUG] Tipo de notificación detectado:', notificationType)
     console.log('📋 [DEBUG] Secret Key configurada:', process.env.MERCADOPAGO_WEBHOOK_SECRET ? 'SÍ (longitud: ' + process.env.MERCADOPAGO_WEBHOOK_SECRET.length + ')' : 'NO')
     
     const isSignatureValid = await validateMercadoPagoSignature(request)
