@@ -75,6 +75,13 @@ export async function validateMercadoPagoSignature(
     const messageTimestamp = parseInt(ts, 10) * 1000;
     const timeDifference = Math.abs(currentTimestamp - messageTimestamp);
     
+    // 🔍 DEBUG: Mostrar timestamp parseado SIEMPRE
+    console.log('🕐 [MP_SIGNATURE] Timestamp parseado:');
+    console.log('   - Raw (segundos):', ts);
+    console.log('   - Convertido (ms):', messageTimestamp);
+    console.log('   - Fecha:', new Date(messageTimestamp).toISOString());
+    console.log('   - Diferencia:', timeDifference, 'ms');
+    
     // Permitir máximo 5 minutos de diferencia (300000 ms)
     if (timeDifference > 300000) {
       console.error('❌ [MP_SIGNATURE] Timestamp del webhook muy antiguo (posible replay attack)');
