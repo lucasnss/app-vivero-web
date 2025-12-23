@@ -65,8 +65,19 @@ export async function POST(request: NextRequest) {
     const queryParams = Object.fromEntries(request.nextUrl.searchParams)
     console.log('📋 [DEBUG] Query params:', queryParams)
     
-    // ✅ Detectar tipo de notificación
-    const notificationType = queryParams['data.id'] ? 'payment' : (queryParams['id'] ? 'merchant_order' : 'unknown')
+    // ✅ Detectar tipo de notificación (soporta ambos formatos de payment)
+    const topic = queryParams['topic']
+    const type = queryParams['type']
+    const hasDataId = !!queryParams['data.id']
+    const hasId = !!queryParams['id']
+    
+    let notificationType = 'unknown'
+    if (topic === 'merchant_order' && hasId) {
+      notificationType = 'merchant_order'
+    } else if ((hasDataId && type === 'payment') || (hasId && topic === 'payment')) {
+      notificationType = 'payment'
+    }
+    
     console.log('📋 [DEBUG] Tipo de notificación detectado:', notificationType)
     console.log('📋 [DEBUG] Secret Key configurada:', process.env.MERCADOPAGO_WEBHOOK_SECRET ? 'SÍ (longitud: ' + process.env.MERCADOPAGO_WEBHOOK_SECRET.length + ')' : 'NO')
     

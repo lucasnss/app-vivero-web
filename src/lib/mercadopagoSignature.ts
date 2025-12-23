@@ -34,23 +34,47 @@ export async function validateMercadoPagoSignature(
     }
 
     // 3. Extraer query params de la URL
-    // ✅ Soporta ambos formatos: 
-    //    - Notificaciones de pago: ?data.id=XXX&type=payment
-    //    - Notificaciones de merchant_order: ?id=XXX&topic=merchant_order
+    // ✅ Soporta AMBOS formatos de payment: 
+    //    - Formato 1: ?data.id=XXX&type=payment (Estándar)
+    //    - Formato 2: ?id=XXX&topic=payment (Alternativo)
+    //    - Merchant Order: ?id=XXX&topic=merchant_order
     const url = new URL(request.url);
     const dataId = url.searchParams.get('data.id');
     const id = url.searchParams.get('id');
     const topic = url.searchParams.get('topic');
+    const type = url.searchParams.get('type');
     
-    // Detectar tipo de notificación
+    // Detectar tipo de notificación (soporta ambos formatos de payment)
     const isMerchantOrder = topic === 'merchant_order' && id;
-    const isPayment = dataId && !isMerchantOrder;
-    const notificationId = isMerchantOrder ? id : dataId;
+    const isPayment = (dataId && type === 'payment') || (id && topic === 'payment');
     
-    console.log(`🔍 Tipo de notificación: ${isMerchantOrder ? 'merchant_order' : (isPayment ? 'payment' : 'unknown')}, ID: ${notificationId}`);
+    // Determinar qué formato se usó
+    let notificationFormat = 'unknown';
+    let notificationId = null;
+    
+    if (isMerchantOrder) {
+      notificationId = id;
+      notificationFormat = 'merchant_order';
+    } else if (dataId && type === 'payment') {
+      notificationId = dataId;
+      notificationFormat = 'data.id';
+    } else if (id && topic === 'payment') {
+      notificationId = id;
+      notificationFormat = 'id';
+    }
+    
+    const notificationType = isMerchantOrder ? 'merchant_order' : (isPayment ? 'payment' : 'unknown');
+    console.log(`🔍 Tipo de notificación: ${notificationType}, ID: ${notificationId}, Formato: ${notificationFormat}`);
+    
+    // Validar tipo desconocido
+    if (!isPayment && !isMerchantOrder) {
+      console.error('❌ [MP_SIGNATURE] Tipo de notificación desconocido. Query params:', { type, topic, hasDataId: !!dataId, hasId: !!id });
+      console.error('   URL:', request.url);
+      return false;
+    }
     
     if (!notificationId) {
-      console.error('❌ [MP_SIGNATURE] Query params data.id o id faltantes en URL:', request.url);
+      console.error('❌ [MP_SIGNATURE] ID de notificación faltante en URL:', request.url);
       return false;
     }
 
@@ -100,13 +124,19 @@ export async function validateMercadoPagoSignature(
     }
 
     // 6. Construir el manifest según documentación de MercadoPago
-    // Formato depende del tipo de notificación:
-    //   - payment: data.id:{id};request-id:{x-request-id};ts:{ts};
+    // Formato depende del tipo y formato de notificación:
+    //   - payment Formato 1: data.id:{id};request-id:{x-request-id};ts:{ts};
+    //   - payment Formato 2: id:{id};request-id:{x-request-id};ts:{ts};
     //   - merchant_order: id:{id};request-id:{x-request-id};ts:{ts};
-    const idPart = isMerchantOrder ? `id:${notificationId}` : `data.id:${notificationId}`;
-    const manifest = `${idPart};request-id:${xRequestId};ts:${ts};`;
+    let idPart: string;
+    if (notificationFormat === 'data.id') {
+      idPart = `data.id:${notificationId}`;
+    } else {
+      idPart = `id:${notificationId}`;
+    }
     
-    console.log(`📋 Manifest construido (${isMerchantOrder ? 'merchant_order' : 'payment'}): ${manifest}`);
+    const manifest = `${idPart};request-id:${xRequestId};ts:${ts};`;
+    console.log(`📋 Manifest construido (${notificationType} - Formato: ${notificationFormat}): ${manifest}`);
 
     // 7. Calcular HMAC SHA256
     const hmac = crypto.createHmac('sha256', secret);
@@ -121,11 +151,15 @@ export async function validateMercadoPagoSignature(
 
     if (isValid) {
       console.log('✅ [MP_SIGNATURE] Firma de MercadoPago validada correctamente');
-      console.log(`   ${isMerchantOrder ? 'id' : 'data.id'}:`, notificationId);
+      console.log(`   Tipo: ${notificationType}`);
+      console.log(`   Formato: ${notificationFormat}`);
+      console.log(`   ${notificationFormat === 'data.id' ? 'data.id' : 'id'}:`, notificationId);
       console.log('   request-id:', xRequestId);
       return true;
     } else {
       console.error('❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE');
+      console.error('   Tipo:', notificationType);
+      console.error('   Formato:', notificationFormat);
       console.error('   Manifest usado:', manifest);
       console.error('   Hash esperado:', calculatedHash);
       console.error('   Hash recibido:', hash);
