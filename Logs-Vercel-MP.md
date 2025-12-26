@@ -1,439 +1,411 @@
-1er log :
-2025-12-23 00:06:17.986 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:17.986 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
-2025-12-23 00:06:17.986 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:17.986 [info] 🔐 [WEBHOOK] Validando firma x-signature...
-2025-12-23 00:06:17.986 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=36675958546&topic=merchant_order
-2025-12-23 00:06:17.986 [info] 📋 [DEBUG] Headers recibidos:
-2025-12-23 00:06:17.986 [info] - x-signature: ts=1766448377,v1=74d5707491f9f4179ca28beaa1972fdd46c202e807aa80b9850b86f2e9cefcd6
-2025-12-23 00:06:17.986 [info] - x-request-id: d2fb55c8-31f0-452f-99d5-ed4ca041e315
-2025-12-23 00:06:17.986 [info] - user-agent: MercadoPago Feed v2.0 merchant_order
-2025-12-23 00:06:17.986 [info] - content-type: application/json
-2025-12-23 00:06:17.986 [info] 📋 [DEBUG] Query params: { id: '36675958546', topic: 'merchant_order' }
-2025-12-23 00:06:17.986 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
-2025-12-23 00:06:17.986 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
-2025-12-23 00:06:17.986 [info] 🔍 Tipo de notificación: merchant_order, ID: 36675958546
-2025-12-23 00:06:17.986 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
-2025-12-23 00:06:17.986 [info] - Raw (segundos): 1766448377
-2025-12-23 00:06:17.986 [info] - Convertido (ms): 1766448377000
-2025-12-23 00:06:17.986 [info] - Fecha: 2025-12-23T00:06:17.000Z
-2025-12-23 00:06:17.986 [info] - Diferencia: 984 ms
-2025-12-23 00:06:17.986 [info] 📋 Manifest construido (merchant_order): id:36675958546;request-id:d2fb55c8-31f0-452f-99d5-ed4ca041e315;ts:1766448377;
-2025-12-23 00:06:17.986 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
-2025-12-23 00:06:17.986 [error] Manifest usado: id:36675958546;request-id:d2fb55c8-31f0-452f-99d5-ed4ca041e315;ts:1766448377;
-2025-12-23 00:06:17.986 [error] Hash esperado: 23fad60d6e2abba105bd8510c20088ab652e1319171f03df87c5aebd58dcabf4
-2025-12-23 00:06:17.986 [error] Hash recibido: 74d5707491f9f4179ca28beaa1972fdd46c202e807aa80b9850b86f2e9cefcd6
-2025-12-23 00:06:17.986 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:17.986 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
-2025-12-23 00:06:17.986 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:18.272 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
-2025-12-23 00:06:18.272 [info] 🔍 Query params recibidos: { id: '36675958546', topic: 'merchant_order' }
-2025-12-23 00:06:18.272 [info] 📦 Body recibido: {
+2025-12-23 02:08:14.614 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.614 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
+2025-12-23 02:08:14.614 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.614 [info] 🔐 [WEBHOOK] Validando firma x-signature...
+2025-12-23 02:08:14.614 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=36678944360&topic=merchant_order
+2025-12-23 02:08:14.614 [info] 📋 [DEBUG] Headers recibidos:
+2025-12-23 02:08:14.614 [info] - x-signature: ts=1766455694,v1=5c80908c297a81fec85641e32f78210f42fa1de8a712d6d73a55f663f43082f5
+2025-12-23 02:08:14.614 [info] - x-request-id: b01f0262-589b-4feb-aff1-ac74c690b4d0
+2025-12-23 02:08:14.614 [info] - user-agent: MercadoPago Feed v2.0 merchant_order
+2025-12-23 02:08:14.614 [info] - content-type: application/json
+2025-12-23 02:08:14.614 [info] 📋 [DEBUG] Query params: { id: '36678944360', topic: 'merchant_order' }
+2025-12-23 02:08:14.615 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
+2025-12-23 02:08:14.615 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
+2025-12-23 02:08:14.615 [info] 🔍 Tipo de notificación: merchant_order, ID: 36678944360, Formato: merchant_order
+2025-12-23 02:08:14.615 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
+2025-12-23 02:08:14.615 [info] - Raw (segundos): 1766455694
+2025-12-23 02:08:14.615 [info] - Convertido (ms): 1766455694000
+2025-12-23 02:08:14.615 [info] - Fecha: 2025-12-23T02:08:14.000Z
+2025-12-23 02:08:14.615 [info] - Diferencia: 614 ms
+2025-12-23 02:08:14.615 [info] 📋 Manifest construido (merchant_order - Formato: merchant_order): id:36678944360;request-id:b01f0262-589b-4feb-aff1-ac74c690b4d0;ts:1766455694;
+2025-12-23 02:08:14.615 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
+2025-12-23 02:08:14.615 [error] Tipo: merchant_order
+2025-12-23 02:08:14.615 [error] Formato: merchant_order
+2025-12-23 02:08:14.615 [error] Manifest usado: id:36678944360;request-id:b01f0262-589b-4feb-aff1-ac74c690b4d0;ts:1766455694;
+2025-12-23 02:08:14.615 [error] Hash esperado: 3efa320af8c52cc5cbf453e68e6783bbd4eba29dace4a5b98cc8c55e5016c966
+2025-12-23 02:08:14.615 [error] Hash recibido: 5c80908c297a81fec85641e32f78210f42fa1de8a712d6d73a55f663f43082f5
+2025-12-23 02:08:14.615 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.615 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
+2025-12-23 02:08:14.615 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.818 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
+2025-12-23 02:08:14.818 [info] 🔍 Query params recibidos: { id: '36678944360', topic: 'merchant_order' }
+2025-12-23 02:08:14.818 [info] 📦 Body recibido: {
   id: undefined,
   type: undefined,
   action: undefined,
   data_id: undefined
 }
-2025-12-23 00:06:18.272 [info] 🔔 Webhook procesado: {
-  id: '36675958546',
+2025-12-23 02:08:14.818 [info] 🔔 Webhook procesado: {
+  id: '36678944360',
   type: 'merchant_order',
   action: null,
-  data_id: '36675958546'
+  data_id: '36678944360'
 }
-2025-12-23 00:06:18.273 [info] ℹ️ Webhook ignorado, no es de tipo payment: merchant_order
+2025-12-23 02:08:14.818 [info] ℹ️ Webhook ignorado, no es de tipo payment: merchant_order
 
 SEGUNDO LOG:
-2025-12-23 00:06:17.631 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:17.631 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
-2025-12-23 00:06:17.631 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:17.631 [info] 🔐 [WEBHOOK] Validando firma x-signature...
-2025-12-23 00:06:17.631 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=36675958546&topic=merchant_order
-2025-12-23 00:06:17.631 [info] 📋 [DEBUG] Headers recibidos:
-2025-12-23 00:06:17.631 [info] - x-signature: ts=1766448377,v1=563384fd0ebd685d6a07d579da5f38f27bb53133d01e4c12c970ba27eaa2c8a7
-2025-12-23 00:06:17.631 [info] - x-request-id: 2b7b77d1-a506-44d4-993a-4825b359f03c
-2025-12-23 00:06:17.631 [info] - user-agent: MercadoPago Feed v2.0 merchant_order
-2025-12-23 00:06:17.631 [info] - content-type: application/json
-2025-12-23 00:06:17.631 [info] 📋 [DEBUG] Query params: { id: '36675958546', topic: 'merchant_order' }
-2025-12-23 00:06:17.631 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
-2025-12-23 00:06:17.631 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
-2025-12-23 00:06:17.631 [info] 🔍 Tipo de notificación: merchant_order, ID: 36675958546
-2025-12-23 00:06:17.631 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
-2025-12-23 00:06:17.631 [info] - Raw (segundos): 1766448377
-2025-12-23 00:06:17.631 [info] - Convertido (ms): 1766448377000
-2025-12-23 00:06:17.631 [info] - Fecha: 2025-12-23T00:06:17.000Z
-2025-12-23 00:06:17.631 [info] - Diferencia: 630 ms
-2025-12-23 00:06:17.631 [info] 📋 Manifest construido (merchant_order): id:36675958546;request-id:2b7b77d1-a506-44d4-993a-4825b359f03c;ts:1766448377;
-2025-12-23 00:06:17.631 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
-2025-12-23 00:06:17.631 [error] Manifest usado: id:36675958546;request-id:2b7b77d1-a506-44d4-993a-4825b359f03c;ts:1766448377;
-2025-12-23 00:06:17.631 [error] Hash esperado: 4e71d9762e967cf722505a82a58a15181272e9fe4292d366a454d6f48ac0f30d
-2025-12-23 00:06:17.631 [error] Hash recibido: 563384fd0ebd685d6a07d579da5f38f27bb53133d01e4c12c970ba27eaa2c8a7
-2025-12-23 00:06:17.631 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:17.631 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
-2025-12-23 00:06:17.631 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:17.798 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
-2025-12-23 00:06:17.799 [info] 🔍 Query params recibidos: { id: '36675958546', topic: 'merchant_order' }
-2025-12-23 00:06:17.799 [info] 📦 Body recibido: {
+2025-12-23 02:08:14.218 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.218 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
+2025-12-23 02:08:14.218 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.218 [info] 🔐 [WEBHOOK] Validando firma x-signature...
+2025-12-23 02:08:14.218 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=36678944360&topic=merchant_order
+2025-12-23 02:08:14.218 [info] 📋 [DEBUG] Headers recibidos:
+2025-12-23 02:08:14.218 [info] - x-signature: ts=1766455694,v1=f2d2d76f249a18332737e7a23e0a4d4209eeadf42c80a8771bbb116fa64c3f1b
+2025-12-23 02:08:14.218 [info] - x-request-id: 08e8663d-b132-4ea2-be1a-56bf6be67152
+2025-12-23 02:08:14.218 [info] - user-agent: MercadoPago Feed v2.0 merchant_order
+2025-12-23 02:08:14.218 [info] - content-type: application/json
+2025-12-23 02:08:14.218 [info] 📋 [DEBUG] Query params: { id: '36678944360', topic: 'merchant_order' }
+2025-12-23 02:08:14.218 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
+2025-12-23 02:08:14.218 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
+2025-12-23 02:08:14.218 [info] 🔍 Tipo de notificación: merchant_order, ID: 36678944360, Formato: merchant_order
+2025-12-23 02:08:14.218 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
+2025-12-23 02:08:14.218 [info] - Raw (segundos): 1766455694
+2025-12-23 02:08:14.219 [info] - Convertido (ms): 1766455694000
+2025-12-23 02:08:14.219 [info] - Fecha: 2025-12-23T02:08:14.000Z
+2025-12-23 02:08:14.219 [info] - Diferencia: 218 ms
+2025-12-23 02:08:14.219 [info] 📋 Manifest construido (merchant_order - Formato: merchant_order): id:36678944360;request-id:08e8663d-b132-4ea2-be1a-56bf6be67152;ts:1766455694;
+2025-12-23 02:08:14.219 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
+2025-12-23 02:08:14.219 [error] Tipo: merchant_order
+2025-12-23 02:08:14.219 [error] Formato: merchant_order
+2025-12-23 02:08:14.219 [error] Manifest usado: id:36678944360;request-id:08e8663d-b132-4ea2-be1a-56bf6be67152;ts:1766455694;
+2025-12-23 02:08:14.219 [error] Hash esperado: df39bf172604bd8ce0972070e3b8359ef4ea73e5253a9c2a6938281755948a55
+2025-12-23 02:08:14.219 [error] Hash recibido: f2d2d76f249a18332737e7a23e0a4d4209eeadf42c80a8771bbb116fa64c3f1b
+2025-12-23 02:08:14.219 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.219 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
+2025-12-23 02:08:14.219 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.386 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
+2025-12-23 02:08:14.386 [info] 🔍 Query params recibidos: { id: '36678944360', topic: 'merchant_order' }
+2025-12-23 02:08:14.386 [info] 📦 Body recibido: {
   id: undefined,
   type: undefined,
   action: undefined,
   data_id: undefined
 }
-2025-12-23 00:06:17.799 [info] 🔔 Webhook procesado: {
-  id: '36675958546',
+2025-12-23 02:08:14.386 [info] 🔔 Webhook procesado: {
+  id: '36678944360',
   type: 'merchant_order',
   action: null,
-  data_id: '36675958546'
+  data_id: '36678944360'
 }
-2025-12-23 00:06:17.799 [info] ℹ️ Webhook ignorado, no es de tipo payment: merchant_order
+2025-12-23 02:08:14.386 [info] ℹ️ Webhook ignorado, no es de tipo payment: merchant_order
 
-TERCER LOG :
-2025-12-23 00:06:16.676 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.676 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
-2025-12-23 00:06:16.676 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.676 [info] 🔐 [WEBHOOK] Validando firma x-signature...
-2025-12-23 00:06:16.676 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=36675958546&topic=merchant_order
-2025-12-23 00:06:16.676 [info] 📋 [DEBUG] Headers recibidos:
-2025-12-23 00:06:16.676 [info] - x-signature: ts=1766448376,v1=259dcf6cd4ba58d28b202a8f8702d130c4c5e92019d45f28511c14407cbfc613
-2025-12-23 00:06:16.676 [info] - x-request-id: abc18256-0090-4ba1-9552-f15569113bc2
-2025-12-23 00:06:16.676 [info] - user-agent: MercadoPago Feed v2.0 merchant_order
-2025-12-23 00:06:16.677 [info] - content-type: application/json
-2025-12-23 00:06:16.677 [info] 📋 [DEBUG] Query params: { id: '36675958546', topic: 'merchant_order' }
-2025-12-23 00:06:16.677 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
-2025-12-23 00:06:16.677 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
-2025-12-23 00:06:16.677 [info] 🔍 Tipo de notificación: merchant_order, ID: 36675958546
-2025-12-23 00:06:16.677 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
-2025-12-23 00:06:16.677 [info] - Raw (segundos): 1766448376
-2025-12-23 00:06:16.677 [info] - Convertido (ms): 1766448376000
-2025-12-23 00:06:16.677 [info] - Fecha: 2025-12-23T00:06:16.000Z
-2025-12-23 00:06:16.677 [info] - Diferencia: 676 ms
-2025-12-23 00:06:16.677 [info] 📋 Manifest construido (merchant_order): id:36675958546;request-id:abc18256-0090-4ba1-9552-f15569113bc2;ts:1766448376;
-2025-12-23 00:06:16.677 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
-2025-12-23 00:06:16.678 [error] Manifest usado: id:36675958546;request-id:abc18256-0090-4ba1-9552-f15569113bc2;ts:1766448376;
-2025-12-23 00:06:16.678 [error] Hash esperado: e2befc9e90711743ed2b09358f021ffa5a72a8fd073b25cfaa435490a2f98fe7
-2025-12-23 00:06:16.678 [error] Hash recibido: 259dcf6cd4ba58d28b202a8f8702d130c4c5e92019d45f28511c14407cbfc613
-2025-12-23 00:06:16.678 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.678 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
-2025-12-23 00:06:16.678 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.861 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
-2025-12-23 00:06:16.862 [info] 🔍 Query params recibidos: { id: '36675958546', topic: 'merchant_order' }
-2025-12-23 00:06:16.862 [info] 📦 Body recibido: {
+TERCER LOG
+
+2025-12-23 02:08:13.318 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:13.318 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
+2025-12-23 02:08:13.318 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:13.318 [info] 🔐 [WEBHOOK] Validando firma x-signature...
+2025-12-23 02:08:13.318 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=36678944360&topic=merchant_order
+2025-12-23 02:08:13.318 [info] 📋 [DEBUG] Headers recibidos:
+2025-12-23 02:08:13.318 [info] - x-signature: ts=1766455693,v1=cdcb6e2bba2e4d34b04a69a3207dd39b6bad385fba258222ace7150444e46c50
+2025-12-23 02:08:13.318 [info] - x-request-id: d6b0124b-53cc-4f8e-8dff-710d241ac434
+2025-12-23 02:08:13.318 [info] - user-agent: MercadoPago Feed v2.0 merchant_order
+2025-12-23 02:08:13.319 [info] - content-type: application/json
+2025-12-23 02:08:13.319 [info] 📋 [DEBUG] Query params: { id: '36678944360', topic: 'merchant_order' }
+2025-12-23 02:08:13.319 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
+2025-12-23 02:08:13.319 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
+2025-12-23 02:08:13.319 [info] 🔍 Tipo de notificación: merchant_order, ID: 36678944360, Formato: merchant_order
+2025-12-23 02:08:13.319 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
+2025-12-23 02:08:13.319 [info] - Raw (segundos): 1766455693
+2025-12-23 02:08:13.319 [info] - Convertido (ms): 1766455693000
+2025-12-23 02:08:13.319 [info] - Fecha: 2025-12-23T02:08:13.000Z
+2025-12-23 02:08:13.319 [info] - Diferencia: 318 ms
+2025-12-23 02:08:13.319 [info] 📋 Manifest construido (merchant_order - Formato: merchant_order): id:36678944360;request-id:d6b0124b-53cc-4f8e-8dff-710d241ac434;ts:1766455693;
+2025-12-23 02:08:13.319 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
+2025-12-23 02:08:13.319 [error] Tipo: merchant_order
+2025-12-23 02:08:13.319 [error] Formato: merchant_order
+2025-12-23 02:08:13.319 [error] Manifest usado: id:36678944360;request-id:d6b0124b-53cc-4f8e-8dff-710d241ac434;ts:1766455693;
+2025-12-23 02:08:13.319 [error] Hash esperado: ad8054ff2d8732417bf82db788b3d81834b30812933fe034991809110e1a20a5
+2025-12-23 02:08:13.319 [error] Hash recibido: cdcb6e2bba2e4d34b04a69a3207dd39b6bad385fba258222ace7150444e46c50
+2025-12-23 02:08:13.319 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:13.319 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
+2025-12-23 02:08:13.319 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:13.531 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
+2025-12-23 02:08:13.532 [info] 🔍 Query params recibidos: { id: '36678944360', topic: 'merchant_order' }
+2025-12-23 02:08:13.532 [info] 📦 Body recibido: {
   id: undefined,
   type: undefined,
   action: undefined,
   data_id: undefined
 }
-2025-12-23 00:06:16.862 [info] 🔔 Webhook procesado: {
-  id: '36675958546',
+2025-12-23 02:08:13.532 [info] 🔔 Webhook procesado: {
+  id: '36678944360',
   type: 'merchant_order',
   action: null,
-  data_id: '36675958546'
+  data_id: '36678944360'
 }
-2025-12-23 00:06:16.862 [info] ℹ️ Webhook ignorado, no es de tipo payment: merchant_order
+2025-12-23 02:08:13.532 [info] ℹ️ Webhook ignorado, no es de tipo payment: merchant_order
 
-CUARTO LOG:
-2025-12-23 00:06:16.756 [info] 🌍 Ambiente detectado: ✅ PRODUCCIÓN (NODE_ENV=production)
-2025-12-23 00:06:16.772 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.772 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
-2025-12-23 00:06:16.772 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.772 [info] 🔐 [WEBHOOK] Validando firma x-signature...
-2025-12-23 00:06:16.772 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?data.id=139102003060&type=payment
-2025-12-23 00:06:16.773 [info] 📋 [DEBUG] Headers recibidos:
-2025-12-23 00:06:16.773 [info] - x-signature: ts=1766448376,v1=6d8ccb786fdb4cb5371a8e847c0078573849757e71596946c11609f203b3ea50
-2025-12-23 00:06:16.774 [info] - x-request-id: abc18256-0090-4ba1-9552-f15569113bc2
-2025-12-23 00:06:16.774 [info] - user-agent: MercadoPago WebHook v1.0 payment
-2025-12-23 00:06:16.774 [info] - content-type: application/json
-2025-12-23 00:06:16.775 [info] 📋 [DEBUG] Query params: { 'data.id': '139102003060', type: 'payment' }
-2025-12-23 00:06:16.775 [info] 📋 [DEBUG] Tipo de notificación detectado: payment
-2025-12-23 00:06:16.775 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
-2025-12-23 00:06:16.776 [info] 🔍 Tipo de notificación: payment, ID: 139102003060
-2025-12-23 00:06:16.776 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
-2025-12-23 00:06:16.776 [info] - Raw (segundos): 1766448376
-2025-12-23 00:06:16.776 [info] - Convertido (ms): 1766448376000
-2025-12-23 00:06:16.776 [info] - Fecha: 2025-12-23T00:06:16.000Z
-2025-12-23 00:06:16.776 [info] - Diferencia: 775 ms
-2025-12-23 00:06:16.776 [info] 📋 Manifest construido (payment): data.id:139102003060;request-id:abc18256-0090-4ba1-9552-f15569113bc2;ts:1766448376;
-2025-12-23 00:06:16.776 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
-2025-12-23 00:06:16.776 [error] Manifest usado: data.id:139102003060;request-id:abc18256-0090-4ba1-9552-f15569113bc2;ts:1766448376;
-2025-12-23 00:06:16.776 [error] Hash esperado: 1107259a9962211c48f6bc4fa444e67e25d3670855a8134de59b303c250a87c6
-2025-12-23 00:06:16.776 [error] Hash recibido: 6d8ccb786fdb4cb5371a8e847c0078573849757e71596946c11609f203b3ea50
-2025-12-23 00:06:16.776 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.776 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
-2025-12-23 00:06:16.776 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.995 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
-2025-12-23 00:06:16.997 [info] 🔍 Query params recibidos: { 'data.id': '139102003060', type: 'payment' }
-2025-12-23 00:06:16.997 [info] 📦 Body recibido: {
-  id: 127547858158,
-  type: 'payment',
-  action: 'payment.created',
-  data_id: '139102003060'
+CUARTO 
+2025-12-23 02:08:13.274 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:13.274 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
+2025-12-23 02:08:13.274 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:13.274 [info] 🔐 [WEBHOOK] Validando firma x-signature...
+2025-12-23 02:08:13.274 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=138472432031&topic=payment
+2025-12-23 02:08:13.274 [info] 📋 [DEBUG] Headers recibidos:
+2025-12-23 02:08:13.274 [info] - x-signature: ts=1766455693,v1=d1d215483c5ff4eb35893b048a8a1bde6f74ded3ee9cea43b2a997600a0aac06
+2025-12-23 02:08:13.274 [info] - x-request-id: d6b0124b-53cc-4f8e-8dff-710d241ac434
+2025-12-23 02:08:13.274 [info] - user-agent: MercadoPago Feed v2.0 payment
+2025-12-23 02:08:13.274 [info] - content-type: application/json
+2025-12-23 02:08:13.274 [info] 📋 [DEBUG] Query params: { id: '138472432031', topic: 'payment' }
+2025-12-23 02:08:13.274 [info] 📋 [DEBUG] Tipo de notificación detectado: payment
+2025-12-23 02:08:13.274 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
+2025-12-23 02:08:13.274 [info] 🔍 Tipo de notificación: payment, ID: 138472432031, Formato: id
+2025-12-23 02:08:13.274 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
+2025-12-23 02:08:13.274 [info] - Raw (segundos): 1766455693
+2025-12-23 02:08:13.274 [info] - Convertido (ms): 1766455693000
+2025-12-23 02:08:13.274 [info] - Fecha: 2025-12-23T02:08:13.000Z
+2025-12-23 02:08:13.274 [info] - Diferencia: 269 ms
+2025-12-23 02:08:13.274 [info] 📋 Manifest construido (payment - Formato: id): id:138472432031;request-id:d6b0124b-53cc-4f8e-8dff-710d241ac434;ts:1766455693;
+2025-12-23 02:08:13.274 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
+2025-12-23 02:08:13.274 [error] Tipo: payment
+2025-12-23 02:08:13.274 [error] Formato: id
+2025-12-23 02:08:13.274 [error] Manifest usado: id:138472432031;request-id:d6b0124b-53cc-4f8e-8dff-710d241ac434;ts:1766455693;
+2025-12-23 02:08:13.274 [error] Hash esperado: 7f11ca90f24ce57e4acbf3388561e8497d5d7ba5f0114c03a9292ec7420e3b10
+2025-12-23 02:08:13.274 [error] Hash recibido: d1d215483c5ff4eb35893b048a8a1bde6f74ded3ee9cea43b2a997600a0aac06
+2025-12-23 02:08:13.274 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:13.274 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
+2025-12-23 02:08:13.274 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:13.446 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
+2025-12-23 02:08:13.447 [info] 🔍 Query params recibidos: { id: '138472432031', topic: 'payment' }
+2025-12-23 02:08:13.447 [info] 📦 Body recibido: {
+  id: undefined,
+  type: undefined,
+  action: undefined,
+  data_id: undefined
 }
-2025-12-23 00:06:16.997 [info] 🔔 Webhook procesado: {
-  id: 127547858158,
+2025-12-23 02:08:13.447 [info] 🔔 Webhook procesado: {
+  id: '138472432031',
   type: 'payment',
-  action: 'payment.created',
-  data_id: '139102003060'
+  action: null,
+  data_id: '138472432031'
 }
-2025-12-23 00:06:17.183 [info] 🔄 Procesando pago: 139102003060
-2025-12-23 00:06:17.183 [info] 🔍 Notificación a procesar: {
-  id: 127547858158,
+2025-12-23 02:08:13.937 [info] 🔄 Procesando pago: 138472432031
+2025-12-23 02:08:13.937 [info] 🔍 Notificación a procesar: {
+  id: '138472432031',
   type: 'payment',
-  action: 'payment.created',
-  data: { id: '139102003060' }
+  action: null,
+  data: { id: '138472432031' }
 }
-2025-12-23 00:06:17.741 [info] 🔍 Analizando pago para detectar tipo: {
+2025-12-23 02:08:14.515 [info] 🔍 Analizando pago para detectar tipo: {
   live_mode: undefined,
   payment_method_id: 'visa',
   transaction_amount: 10,
   payer_email: undefined,
-  payment_id: '139102003060',
+  payment_id: '138472432031',
   is_development_mock: undefined
 }
-2025-12-23 00:06:17.741 [info] ✅ Pago detectado como REAL
-2025-12-23 00:06:17.741 [info] 📊 Tipo de pago: ✅ REAL
-2025-12-23 00:06:17.741 [info] 🔍 Buscando datos temporales de la preferencia...
-2025-12-23 00:06:17.940 [info] 🔎 Buscando datos temporales con external_reference: 340f7a01-72d8-41b6-8529-d4a8092d0617
-2025-12-23 00:06:18.090 [info] ✅ Datos temporales encontrados: {
-  temp_order_id: '340f7a01-72d8-41b6-8529-d4a8092d0617',
+2025-12-23 02:08:14.515 [info] ✅ Pago detectado como REAL
+2025-12-23 02:08:14.515 [info] 📊 Tipo de pago: ✅ REAL
+2025-12-23 02:08:14.515 [info] 🔍 Buscando datos temporales de la preferencia...
+2025-12-23 02:08:14.718 [info] 🔎 Buscando datos temporales con external_reference: 1643f282-0f1b-4993-a976-65bbaffe9756
+2025-12-23 02:08:14.872 [info] ✅ Datos temporales encontrados: {
+  temp_order_id: '1643f282-0f1b-4993-a976-65bbaffe9756',
   customer_email: 'lucasctmn@gmail.com'
 }
-2025-12-23 00:06:18.090 [info] 🔍 Verificando si ya existe orden con external_reference: 340f7a01-72d8-41b6-8529-d4a8092d0617
-2025-12-23 00:06:18.260 [info] 📝 Creando orden real desde datos temporales...
-2025-12-23 00:06:18.260 [info] 📧 Email REAL del cliente a guardar: lucasctmn@gmail.com
-2025-12-23 00:06:18.260 [info] 📧 Email usado en MP: lucasctmn@gmail.com
-2025-12-23 00:06:18.261 [info] 📝 Creando orden con datos del cliente: {
+2025-12-23 02:08:14.872 [info] 🔍 Verificando si ya existe orden con external_reference: 1643f282-0f1b-4993-a976-65bbaffe9756
+2025-12-23 02:08:15.033 [info] 📝 Creando orden real desde datos temporales...
+2025-12-23 02:08:15.033 [info] 📧 Email REAL del cliente a guardar: lucasctmn@gmail.com
+2025-12-23 02:08:15.033 [info] 📧 Email usado en MP: lucasctmn@gmail.com
+2025-12-23 02:08:15.034 [info] 📝 Creando orden con datos del cliente: {
   email: 'lucasctmn@gmail.com',
-  name: 'vamo que funciona todo wachoo',
+  name: 'prueba final sin errores',
   phone: '313131313131',
   has_shipping_address: true
 }
-2025-12-23 00:06:18.431 [info] ✅ Orden creada exitosamente: {
-  order_id: '148c8cbe-c8a3-45b8-b497-247d1545cad8',
+2025-12-23 02:08:15.232 [info] ✅ Orden creada exitosamente: {
+  order_id: 'fc5e6fe5-8242-450f-a5e5-f01898be6643',
   customer_email: 'lucasctmn@gmail.com',
-  customer_name: 'vamo que funciona todo wachoo',
+  customer_name: 'prueba final sin errores',
   customer_phone: '313131313131'
 }
-2025-12-23 00:06:18.748 [info] ✅ Orden real creada con external_reference: 148c8cbe-c8a3-45b8-b497-247d1545cad8
-2025-12-23 00:06:18.748 [info] ✅ Email guardado en la orden: lucasctmn@gmail.com
-2025-12-23 00:06:18.900 [info] 📝 Actualizando orden con información de pago...
-2025-12-23 00:06:18.900 [info] Order ID: 148c8cbe-c8a3-45b8-b497-247d1545cad8
-2025-12-23 00:06:18.900 [info] Payment Info: {
-  payment_id: '139102003060',
+2025-12-23 02:08:15.553 [info] ✅ Orden real creada con external_reference: fc5e6fe5-8242-450f-a5e5-f01898be6643
+2025-12-23 02:08:15.553 [info] ✅ Email guardado en la orden: lucasctmn@gmail.com
+2025-12-23 02:08:15.739 [info] 📝 Actualizando orden con información de pago...
+2025-12-23 02:08:15.739 [info] Order ID: fc5e6fe5-8242-450f-a5e5-f01898be6643
+2025-12-23 02:08:15.739 [info] Payment Info: {
+  payment_id: '138472432031',
   status: 'approved',
   payment_method_id: 'visa',
   payment_type_id: 'prepaid_card',
   payer_email: 'lucasctmn@gmail.com',
-  date_approved: '2025-12-22T20:06:16.000-04:00'
+  date_approved: '2025-12-22T22:08:12.000-04:00'
 }
-2025-12-23 00:06:19.572 [info] ✅ Pago aprobado, marcando orden como pagada
-2025-12-23 00:06:19.573 [info] 💰 Marcando orden como pagada: 148c8cbe-c8a3-45b8-b497-247d1545cad8
-2025-12-23 00:06:19.726 [info] 📦 Orden encontrada con 1 items
-2025-12-23 00:06:19.726 [info] 🔍 Validando disponibilidad de stock...
-2025-12-23 00:06:19.727 [info] 🔍 Validando stock para 1 productos...
-2025-12-23 00:06:19.901 [info] - Guantes de jardinería : 47 disponible, 1 solicitado
-2025-12-23 00:06:19.901 [info] ✅ Validación de stock exitosa
-2025-12-23 00:06:19.901 [info] ✅ Stock validado correctamente
-2025-12-23 00:06:20.062 [info] ✅ Orden actualizada en BD
-2025-12-23 00:06:20.062 [info] 📉 Reduciendo stock de productos...
-2025-12-23 00:06:20.062 [info] - Reduciendo 1 unidades de Guantes de jardinería
-2025-12-23 00:06:20.538 [info] ✅ Stock reducido exitosamente para todos los productos
-2025-12-23 00:06:20.854 [info] ✅ Orden marcada como pagada exitosamente
-2025-12-23 00:06:20.854 [info] 🗑️ Marcando para limpiar carrito temporal del cliente
-2025-12-23 00:06:21.016 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:21.016 [info] ✅ [WEBHOOK] Procesamiento completado en 4251ms
-2025-12-23 00:06:21.016 [info] Order ID: 148c8cbe-c8a3-45b8-b497-247d1545cad8
-2025-12-23 00:06:21.016 [info] Payment ID: 139102003060
-2025-12-23 00:06:21.016 [info] Status: approved
-2025-12-23 00:06:21.016 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:16.460 [info] ✅ Pago aprobado, marcando orden como pagada
+2025-12-23 02:08:16.461 [info] 💰 Marcando orden como pagada: fc5e6fe5-8242-450f-a5e5-f01898be6643
+2025-12-23 02:08:16.611 [info] 📦 Orden encontrada con 1 items
+2025-12-23 02:08:16.611 [info] 🔍 Validando disponibilidad de stock...
+2025-12-23 02:08:16.611 [info] 🔍 Validando stock para 1 productos...
+2025-12-23 02:08:16.766 [info] - Guantes de jardinería : 46 disponible, 1 solicitado
+2025-12-23 02:08:16.766 [info] ✅ Validación de stock exitosa
+2025-12-23 02:08:16.766 [info] ✅ Stock validado correctamente
+2025-12-23 02:08:16.922 [info] ✅ Orden actualizada en BD
+2025-12-23 02:08:16.922 [info] 📉 Reduciendo stock de productos...
+2025-12-23 02:08:16.922 [info] - Reduciendo 1 unidades de Guantes de jardinería
+2025-12-23 02:08:17.428 [info] ✅ Stock reducido exitosamente para todos los productos
+2025-12-23 02:08:17.761 [info] ✅ Orden marcada como pagada exitosamente
+2025-12-23 02:08:17.761 [info] 🗑️ Marcando para limpiar carrito temporal del cliente
+2025-12-23 02:08:17.910 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:17.910 [info] ✅ [WEBHOOK] Procesamiento completado en 4641ms
+2025-12-23 02:08:17.910 [info] Order ID: fc5e6fe5-8242-450f-a5e5-f01898be6643
+2025-12-23 02:08:17.910 [info] Payment ID: 138472432031
+2025-12-23 02:08:17.910 [info] Status: approved
+2025-12-23 02:08:17.910 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-QUINTO LOG:
-2025-12-23 00:06:16.635 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.635 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
-2025-12-23 00:06:16.635 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.635 [info] 🔐 [WEBHOOK] Validando firma x-signature...
-2025-12-23 00:06:16.635 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=139102003060&topic=payment
-2025-12-23 00:06:16.635 [info] 📋 [DEBUG] Headers recibidos:
-2025-12-23 00:06:16.635 [info] - x-signature: ts=1766448376,v1=a6032472cf545f32dcf7a7fac4f8f3fe95c5a53fcdcbd0b3830aa67287a8579e
-2025-12-23 00:06:16.635 [info] - x-request-id: abc18256-0090-4ba1-9552-f15569113bc2
-2025-12-23 00:06:16.635 [info] - user-agent: MercadoPago Feed v2.0 payment
-2025-12-23 00:06:16.635 [info] - content-type: application/json
-2025-12-23 00:06:16.636 [info] 📋 [DEBUG] Query params: { id: '139102003060', topic: 'payment' }
-2025-12-23 00:06:16.636 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
-2025-12-23 00:06:16.636 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
-2025-12-23 00:06:16.636 [info] 🔍 Tipo de notificación: unknown, ID: null
-2025-12-23 00:06:16.636 [error] ❌ [MP_SIGNATURE] Query params data.id o id faltantes en URL: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=139102003060&topic=payment
-2025-12-23 00:06:16.636 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.636 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
-2025-12-23 00:06:16.636 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:16.802 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
-2025-12-23 00:06:16.802 [info] 🔍 Query params recibidos: { id: '139102003060', topic: 'payment' }
-2025-12-23 00:06:16.802 [info] 📦 Body recibido: {
-  id: undefined,
-  type: undefined,
-  action: undefined,
-  data_id: undefined
-}
-2025-12-23 00:06:16.802 [info] 🔔 Webhook procesado: {
-  id: '139102003060',
+QUINTO 
+2025-12-23 02:08:13.990 [info] 🌍 Ambiente detectado: ✅ PRODUCCIÓN (NODE_ENV=production)
+2025-12-23 02:08:14.012 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.012 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
+2025-12-23 02:08:14.012 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.012 [info] 🔐 [WEBHOOK] Validando firma x-signature...
+2025-12-23 02:08:14.012 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?data.id=138472432031&type=payment
+2025-12-23 02:08:14.012 [info] 📋 [DEBUG] Headers recibidos:
+2025-12-23 02:08:14.013 [info] - x-signature: ts=1766455693,v1=7f11ca90f24ce57e4acbf3388561e8497d5d7ba5f0114c03a9292ec7420e3b10
+2025-12-23 02:08:14.013 [info] - x-request-id: d6b0124b-53cc-4f8e-8dff-710d241ac434
+2025-12-23 02:08:14.013 [info] - user-agent: MercadoPago WebHook v1.0 payment
+2025-12-23 02:08:14.013 [info] - content-type: application/json
+2025-12-23 02:08:14.013 [info] 📋 [DEBUG] Query params: { 'data.id': '138472432031', type: 'payment' }
+2025-12-23 02:08:14.013 [info] 📋 [DEBUG] Tipo de notificación detectado: payment
+2025-12-23 02:08:14.013 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
+2025-12-23 02:08:14.014 [info] 🔍 Tipo de notificación: payment, ID: 138472432031, Formato: data.id
+2025-12-23 02:08:14.014 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
+2025-12-23 02:08:14.014 [info] - Raw (segundos): 1766455693
+2025-12-23 02:08:14.014 [info] - Convertido (ms): 1766455693000
+2025-12-23 02:08:14.017 [info] - Fecha: 2025-12-23T02:08:13.000Z
+2025-12-23 02:08:14.017 [info] - Diferencia: 1014 ms
+2025-12-23 02:08:14.017 [info] 📋 Manifest construido (payment - Formato: data.id): data.id:138472432031;request-id:d6b0124b-53cc-4f8e-8dff-710d241ac434;ts:1766455693;
+2025-12-23 02:08:14.017 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
+2025-12-23 02:08:14.017 [error] Tipo: payment
+2025-12-23 02:08:14.017 [error] Formato: data.id
+2025-12-23 02:08:14.017 [error] Manifest usado: data.id:138472432031;request-id:d6b0124b-53cc-4f8e-8dff-710d241ac434;ts:1766455693;
+2025-12-23 02:08:14.017 [error] Hash esperado: 733a638dc9aee82b03d52b0d6d80847f04adb57e3ed754e8c9a1f4cf0cd2d310
+2025-12-23 02:08:14.017 [error] Hash recibido: 7f11ca90f24ce57e4acbf3388561e8497d5d7ba5f0114c03a9292ec7420e3b10
+2025-12-23 02:08:14.017 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.017 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
+2025-12-23 02:08:14.017 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:14.318 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
+2025-12-23 02:08:14.318 [info] 🔍 Query params recibidos: { 'data.id': '138472432031', type: 'payment' }
+2025-12-23 02:08:14.318 [info] 📦 Body recibido: {
+  id: 127551041914,
   type: 'payment',
-  action: null,
-  data_id: '139102003060'
+  action: 'payment.created',
+  data_id: '138472432031'
 }
-2025-12-23 00:06:17.045 [info] 🔄 Procesando pago: 139102003060
-2025-12-23 00:06:17.045 [info] 🔍 Notificación a procesar: {
-  id: '139102003060',
+2025-12-23 02:08:14.318 [info] 🔔 Webhook procesado: {
+  id: 127551041914,
   type: 'payment',
-  action: null,
-  data: { id: '139102003060' }
+  action: 'payment.created',
+  data_id: '138472432031'
 }
-2025-12-23 00:06:17.606 [info] 🔍 Analizando pago para detectar tipo: {
+2025-12-23 02:08:14.503 [info] 🔄 Procesando pago: 138472432031
+2025-12-23 02:08:14.503 [info] 🔍 Notificación a procesar: {
+  id: 127551041914,
+  type: 'payment',
+  action: 'payment.created',
+  data: { id: '138472432031' }
+}
+2025-12-23 02:08:15.114 [info] 🔍 Analizando pago para detectar tipo: {
   live_mode: undefined,
   payment_method_id: 'visa',
   transaction_amount: 10,
   payer_email: undefined,
-  payment_id: '139102003060',
+  payment_id: '138472432031',
   is_development_mock: undefined
 }
-2025-12-23 00:06:17.606 [info] ✅ Pago detectado como REAL
-2025-12-23 00:06:17.607 [info] 📊 Tipo de pago: ✅ REAL
-2025-12-23 00:06:17.607 [info] 🔍 Buscando datos temporales de la preferencia...
-2025-12-23 00:06:17.795 [info] 🔎 Buscando datos temporales con external_reference: 340f7a01-72d8-41b6-8529-d4a8092d0617
-2025-12-23 00:06:17.988 [info] ✅ Datos temporales encontrados: {
-  temp_order_id: '340f7a01-72d8-41b6-8529-d4a8092d0617',
+2025-12-23 02:08:15.114 [info] ✅ Pago detectado como REAL
+2025-12-23 02:08:15.114 [info] 📊 Tipo de pago: ✅ REAL
+2025-12-23 02:08:15.114 [info] 🔍 Buscando datos temporales de la preferencia...
+2025-12-23 02:08:15.292 [info] 🔎 Buscando datos temporales con external_reference: 1643f282-0f1b-4993-a976-65bbaffe9756
+2025-12-23 02:08:15.494 [info] ✅ Datos temporales encontrados: {
+  temp_order_id: '1643f282-0f1b-4993-a976-65bbaffe9756',
   customer_email: 'lucasctmn@gmail.com'
 }
-2025-12-23 00:06:17.988 [info] 🔍 Verificando si ya existe orden con external_reference: 340f7a01-72d8-41b6-8529-d4a8092d0617
-2025-12-23 00:06:18.156 [info] 📝 Creando orden real desde datos temporales...
-2025-12-23 00:06:18.156 [info] 📧 Email REAL del cliente a guardar: lucasctmn@gmail.com
-2025-12-23 00:06:18.156 [info] 📧 Email usado en MP: lucasctmn@gmail.com
-2025-12-23 00:06:18.156 [info] 📝 Creando orden con datos del cliente: {
-  email: 'lucasctmn@gmail.com',
-  name: 'vamo que funciona todo wachoo',
-  phone: '313131313131',
-  has_shipping_address: true
-}
-2025-12-23 00:06:18.359 [info] ✅ Orden creada exitosamente: {
-  order_id: 'f0b29459-850b-4c80-bd97-163b1a9bbd07',
-  customer_email: 'lucasctmn@gmail.com',
-  customer_name: 'vamo que funciona todo wachoo',
-  customer_phone: '313131313131'
-}
-2025-12-23 00:06:18.715 [info] ✅ Orden real creada con external_reference: f0b29459-850b-4c80-bd97-163b1a9bbd07
-2025-12-23 00:06:18.715 [info] ✅ Email guardado en la orden: lucasctmn@gmail.com
-2025-12-23 00:06:18.904 [info] 📝 Actualizando orden con información de pago...
-2025-12-23 00:06:18.904 [info] Order ID: f0b29459-850b-4c80-bd97-163b1a9bbd07
-2025-12-23 00:06:18.904 [info] Payment Info: {
-  payment_id: '139102003060',
+2025-12-23 02:08:15.494 [info] 🔍 Verificando si ya existe orden con external_reference: 1643f282-0f1b-4993-a976-65bbaffe9756
+2025-12-23 02:08:15.676 [info] ♻️ Orden ya existe (reutilizando): fc5e6fe5-8242-450f-a5e5-f01898be6643
+2025-12-23 02:08:15.858 [info] 📝 Actualizando orden con información de pago...
+2025-12-23 02:08:15.858 [info] Order ID: fc5e6fe5-8242-450f-a5e5-f01898be6643
+2025-12-23 02:08:15.858 [info] Payment Info: {
+  payment_id: '138472432031',
   status: 'approved',
   payment_method_id: 'visa',
   payment_type_id: 'prepaid_card',
   payer_email: 'lucasctmn@gmail.com',
-  date_approved: '2025-12-22T20:06:16.000-04:00'
+  date_approved: '2025-12-22T22:08:12.000-04:00'
 }
-2025-12-23 00:06:19.259 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:19.259 [error] ❌ [ORDER_SERVICE] Error updating payment info
-2025-12-23 00:06:19.259 [error] Order ID: f0b29459-850b-4c80-bd97-163b1a9bbd07
-2025-12-23 00:06:19.259 [error] Payment Data: {
-  "payment_id": "139102003060",
-  "payment_status": "approved",
-  "metodo_pago": "visa",
-  "email_comprador": "lucasctmn@gmail.com",
-  "fecha_pago": "2025-12-22T20:06:16.000-04:00",
-  "payment_type": "prepaid_card",
-  "merchant_order_id": "36675958546"
-}
-2025-12-23 00:06:19.259 [error] Update Data: {
-  "payment_id": "139102003060",
-  "payment_status": "approved",
-  "metodo_pago": "visa",
-  "email_comprador": "lucasctmn@gmail.com",
-  "fecha_pago": "2025-12-22T20:06:16.000-04:00",
-  "payment_type": "prepaid_card",
-  "merchant_order_id": "36675958546",
-  "updated_at": "2025-12-23T00:06:19.091Z"
-}
-2025-12-23 00:06:19.259 [error] Supabase Error: {
-  "code": "23505",
-  "details": null,
-  "hint": null,
-  "message": "duplicate key value violates unique constraint \"orders_payment_id_key\""
-}
-2025-12-23 00:06:19.259 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:19.259 [error] Error updating payment info: Error: Error al actualizar información de pago: duplicate key value violates unique constraint "orders_payment_id_key"
-    at Object.updatePaymentInfo (/var/task/.next/server/chunks/595.js:11:4514)
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at async y (/var/task/.next/server/app/api/mercadopago/webhook/route.js:1:11563)
-    at async /var/task/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38411
-    at async e_.execute (/var/task/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:27880)
-    at async e_.handle (/var/task/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:39943)
-    at async en (/var/task/node_modules/next/dist/compiled/next-server/server.runtime.prod.js:16:25561)
-    at async ea.responseCache.get.routeKind (/var/task/node_modules/next/dist/compiled/next-server/server.runtime.prod.js:17:1028)
-    at async r9.renderToResponseWithComponentsImpl (/var/task/node_modules/next/dist/compiled/next-server/server.runtime.prod.js:17:508)
-    at async r9.renderPageComponent (/var/task/node_modules/next/dist/compiled/next-server/server.runtime.prod.js:17:5102)
-2025-12-23 00:06:19.259 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:19.259 [error] ❌ [WEBHOOK] Error después de 2626ms
-2025-12-23 00:06:19.259 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:19.259 [error] Error procesando webhook: Error: Error al actualizar información de pago: duplicate key value violates unique constraint "orders_payment_id_key"
-    at Object.updatePaymentInfo (/var/task/.next/server/chunks/595.js:11:4514)
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at async y (/var/task/.next/server/app/api/mercadopago/webhook/route.js:1:11563)
-    at async /var/task/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38411
-    at async e_.execute (/var/task/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:27880)
-    at async e_.handle (/var/task/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:39943)
-    at async en (/var/task/node_modules/next/dist/compiled/next-server/server.runtime.prod.js:16:25561)
-    at async ea.responseCache.get.routeKind (/var/task/node_modules/next/dist/compiled/next-server/server.runtime.prod.js:17:1028)
-    at async r9.renderToResponseWithComponentsImpl (/var/task/node_modules/next/dist/compiled/next-server/server.runtime.prod.js:17:508)
-    at async r9.renderPageComponent (/var/task/node_modules/next/dist/compiled/next-server/server.runtime.prod.js:17:5102)
+2025-12-23 02:08:16.612 [info] ✅ Pago aprobado, marcando orden como pagada
+2025-12-23 02:08:16.616 [info] 💰 Marcando orden como pagada: fc5e6fe5-8242-450f-a5e5-f01898be6643
+2025-12-23 02:08:16.799 [info] 📦 Orden encontrada con 1 items
+2025-12-23 02:08:16.799 [info] 🔍 Validando disponibilidad de stock...
+2025-12-23 02:08:16.801 [info] 🔍 Validando stock para 1 productos...
+2025-12-23 02:08:16.983 [info] - Guantes de jardinería : 46 disponible, 1 solicitado
+2025-12-23 02:08:16.983 [info] ✅ Validación de stock exitosa
+2025-12-23 02:08:16.984 [info] ✅ Stock validado correctamente
+2025-12-23 02:08:17.162 [info] ✅ Orden actualizada en BD
+2025-12-23 02:08:17.162 [info] 📉 Reduciendo stock de productos...
+2025-12-23 02:08:17.162 [info] - Reduciendo 1 unidades de Guantes de jardinería
+2025-12-23 02:08:17.718 [info] ✅ Stock reducido exitosamente para todos los productos
+2025-12-23 02:08:18.076 [info] ✅ Orden marcada como pagada exitosamente
+2025-12-23 02:08:18.076 [info] 🗑️ Marcando para limpiar carrito temporal del cliente
+2025-12-23 02:08:18.241 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:18.241 [info] ✅ [WEBHOOK] Procesamiento completado en 4226ms
+2025-12-23 02:08:18.241 [info] Order ID: fc5e6fe5-8242-450f-a5e5-f01898be6643
+2025-12-23 02:08:18.241 [info] Payment ID: 138472432031
+2025-12-23 02:08:18.241 [info] Status: approved
+2025-12-23 02:08:18.241 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+SEXTO
 
-SEXTO LOG:
-
-2025-12-23 00:06:15.082 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:15.083 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
-2025-12-23 00:06:15.083 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:15.083 [info] 🔐 [WEBHOOK] Validando firma x-signature...
-2025-12-23 00:06:15.083 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=36675958546&topic=merchant_order
-2025-12-23 00:06:15.083 [info] 📋 [DEBUG] Headers recibidos:
-2025-12-23 00:06:15.083 [info] - x-signature: ts=1766448374,v1=617434eb24a9cc3f7d378d3b69eb7f4b607299a025af8d73e9afda40928ad270
-2025-12-23 00:06:15.083 [info] - x-request-id: 554acd02-1ef1-4182-bf64-541164798243
-2025-12-23 00:06:15.083 [info] - user-agent: MercadoPago Feed v2.0 merchant_order
-2025-12-23 00:06:15.083 [info] - content-type: application/json
-2025-12-23 00:06:15.084 [info] 📋 [DEBUG] Query params: { id: '36675958546', topic: 'merchant_order' }
-2025-12-23 00:06:15.084 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
-2025-12-23 00:06:15.084 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
-2025-12-23 00:06:15.084 [info] 🔍 Tipo de notificación: merchant_order, ID: 36675958546
-2025-12-23 00:06:15.084 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
-2025-12-23 00:06:15.084 [info] - Raw (segundos): 1766448374
-2025-12-23 00:06:15.084 [info] - Convertido (ms): 1766448374000
-2025-12-23 00:06:15.085 [info] - Fecha: 2025-12-23T00:06:14.000Z
-2025-12-23 00:06:15.085 [info] - Diferencia: 1084 ms
-2025-12-23 00:06:15.085 [info] 📋 Manifest construido (merchant_order): id:36675958546;request-id:554acd02-1ef1-4182-bf64-541164798243;ts:1766448374;
-2025-12-23 00:06:15.085 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
-2025-12-23 00:06:15.085 [error] Manifest usado: id:36675958546;request-id:554acd02-1ef1-4182-bf64-541164798243;ts:1766448374;
-2025-12-23 00:06:15.085 [error] Hash esperado: 90d698902e538a323549169b6d9f0364fb9217f38cd24901b8ea39a5b1fc67aa
-2025-12-23 00:06:15.085 [error] Hash recibido: 617434eb24a9cc3f7d378d3b69eb7f4b607299a025af8d73e9afda40928ad270
-2025-12-23 00:06:15.086 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:15.086 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
-2025-12-23 00:06:15.086 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2025-12-23 00:06:15.407 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
-2025-12-23 00:06:15.408 [info] 🔍 Query params recibidos: { id: '36675958546', topic: 'merchant_order' }
-2025-12-23 00:06:15.408 [info] 📦 Body recibido: {
+2025-12-23 02:08:11.760 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:11.760 [info] 🔔 [WEBHOOK] Notificación recibida de MercadoPago
+2025-12-23 02:08:11.760 [info] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:11.760 [info] 🔐 [WEBHOOK] Validando firma x-signature...
+2025-12-23 02:08:11.760 [info] 📋 [DEBUG] URL completa: https://app-vivero-web.vercel.app/api/mercadopago/webhook?id=36678944360&topic=merchant_order
+2025-12-23 02:08:11.760 [info] 📋 [DEBUG] Headers recibidos:
+2025-12-23 02:08:11.760 [info] - x-signature: ts=1766455690,v1=95482c9b845478ba73db7ad5c5d6984a8a7637cb7392e1f2ac36175f52e97195
+2025-12-23 02:08:11.760 [info] - x-request-id: 9a1078e2-402a-465e-a36f-588ae5c5e88c
+2025-12-23 02:08:11.760 [info] - user-agent: MercadoPago Feed v2.0 merchant_order
+2025-12-23 02:08:11.760 [info] - content-type: application/json
+2025-12-23 02:08:11.760 [info] 📋 [DEBUG] Query params: { id: '36678944360', topic: 'merchant_order' }
+2025-12-23 02:08:11.760 [info] 📋 [DEBUG] Tipo de notificación detectado: merchant_order
+2025-12-23 02:08:11.760 [info] 📋 [DEBUG] Secret Key configurada: SÍ (longitud: 64)
+2025-12-23 02:08:11.760 [info] 🔍 Tipo de notificación: merchant_order, ID: 36678944360, Formato: merchant_order
+2025-12-23 02:08:11.760 [info] 🕐 [MP_SIGNATURE] Timestamp parseado:
+2025-12-23 02:08:11.760 [info] - Raw (segundos): 1766455690
+2025-12-23 02:08:11.760 [info] - Convertido (ms): 1766455690000
+2025-12-23 02:08:11.760 [info] - Fecha: 2025-12-23T02:08:10.000Z
+2025-12-23 02:08:11.760 [info] - Diferencia: 1760 ms
+2025-12-23 02:08:11.760 [info] 📋 Manifest construido (merchant_order - Formato: merchant_order): id:36678944360;request-id:9a1078e2-402a-465e-a36f-588ae5c5e88c;ts:1766455690;
+2025-12-23 02:08:11.761 [error] ❌ [MP_SIGNATURE] Firma de MercadoPago inválida - POSIBLE ATAQUE
+2025-12-23 02:08:11.761 [error] Tipo: merchant_order
+2025-12-23 02:08:11.761 [error] Formato: merchant_order
+2025-12-23 02:08:11.761 [error] Manifest usado: id:36678944360;request-id:9a1078e2-402a-465e-a36f-588ae5c5e88c;ts:1766455690;
+2025-12-23 02:08:11.761 [error] Hash esperado: 323b7c0ebc6cf9fe1db304c61ac3ef0d91342e29509b98c84cb4a7a6cbcc3e3a
+2025-12-23 02:08:11.761 [error] Hash recibido: 95482c9b845478ba73db7ad5c5d6984a8a7637cb7392e1f2ac36175f52e97195
+2025-12-23 02:08:11.761 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:11.761 [error] 🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA
+2025-12-23 02:08:11.761 [error] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-23 02:08:11.971 [warning] ⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)
+2025-12-23 02:08:11.974 [info] 🔍 Query params recibidos: { id: '36678944360', topic: 'merchant_order' }
+2025-12-23 02:08:11.974 [info] 📦 Body recibido: {
   id: undefined,
   type: undefined,
   action: undefined,
   data_id: undefined
 }
-2025-12-23 00:06:15.408 [info] 🔔 Webhook procesado: {
-  id: '36675958546',
+2025-12-23 02:08:11.977 [info] 🔔 Webhook procesado: {
+  id: '36678944360',
   type: 'merchant_order',
   action: null,
-  data_id: '36675958546'
+  data_id: '36678944360'
 }
-2025-12-23 00:06:15.408 [info] ℹ️ Webhook ignorado, no es de tipo payment: merchant_order
-    ULTIOMO LOG:
-2025-12-23 00:05:49.509 [info] 🌍 Ambiente detectado: ✅ PRODUCCIÓN (NODE_ENV=production)
-2025-12-23 00:05:49.521 [info] 🚀 === INICIO CREATE PREFERENCE ===
-2025-12-23 00:05:49.521 [info] 📥 Parseando body del request...
-2025-12-23 00:05:49.522 [info] ✅ Body parseado: {
+2025-12-23 02:08:11.977 [info] ℹ️ Webhook ignorado, no es de tipo payment: merchant_order
+
+SEPTIMO 
+
+2025-12-23 02:07:44.885 [info] 🌍 Ambiente detectado: ✅ PRODUCCIÓN (NODE_ENV=production)
+2025-12-23 02:07:44.891 [info] 🚀 === INICIO CREATE PREFERENCE ===
+2025-12-23 02:07:44.891 [info] 📥 Parseando body del request...
+2025-12-23 02:07:44.892 [info] ✅ Body parseado: {
   "items": [
     {
       "product_id": "e52b9adf-6de3-4216-a1fa-771780d9dec4",
@@ -454,22 +426,22 @@ SEXTO LOG:
   "payment_method": "mercadopago",
   "customer_email": "lucasctmn@gmail.com",
   "customer_email_for_mp": "lucasctmn@gmail.com",
-  "customer_name": "vamo que funciona todo wachoo",
+  "customer_name": "prueba final sin errores",
   "customer_phone": "313131313131",
   "shipping_method": "pickup"
 }
-2025-12-23 00:05:49.523 [info] 🔍 Validando stock de productos...
-2025-12-23 00:05:49.523 [info] - Validando stock para: Guantes de jardinería  (ID: e52b9adf-6de3-4216-a1fa-771780d9dec4, Cantidad: 1)
-2025-12-23 00:05:49.713 [info] - Stock válido para Guantes de jardinería : { isValid: true, availableStock: 47, message: '' }
-2025-12-23 00:05:49.713 [info] 🧮 Calculando total de items...
-2025-12-23 00:05:49.714 [info] ✅ Total calculado: 10
-2025-12-23 00:05:49.714 [info] 📧 Emails recibidos: {
+2025-12-23 02:07:44.892 [info] 🔍 Validando stock de productos...
+2025-12-23 02:07:44.892 [info] - Validando stock para: Guantes de jardinería  (ID: e52b9adf-6de3-4216-a1fa-771780d9dec4, Cantidad: 1)
+2025-12-23 02:07:45.085 [info] - Stock válido para Guantes de jardinería : { isValid: true, availableStock: 46, message: '' }
+2025-12-23 02:07:45.085 [info] 🧮 Calculando total de items...
+2025-12-23 02:07:45.085 [info] ✅ Total calculado: 10
+2025-12-23 02:07:45.086 [info] 📧 Emails recibidos: {
   real: 'lucasctmn@gmail.com',
   for_mp: 'lucasctmn@gmail.com',
   are_different: false
 }
-2025-12-23 00:05:49.714 [info] 💳 Creando preferencia de pago en MP...
-2025-12-23 00:05:49.715 [info] 📤 Enviando datos a Mercado Pago: {
+2025-12-23 02:07:45.086 [info] 💳 Creando preferencia de pago en MP...
+2025-12-23 02:07:45.086 [info] 📤 Enviando datos a Mercado Pago: {
   "items": [
     {
       "id": "e52b9adf-6de3-4216-a1fa-771780d9dec4",
@@ -484,8 +456,8 @@ SEXTO LOG:
   ],
   "payer": {
     "email": "lucasctmn@gmail.com",
-    "name": "vamo",
-    "surname": "que funciona todo wachoo",
+    "name": "prueba",
+    "surname": "final sin errores",
     "phone": {
       "area_code": "11",
       "number": "313131313131"
@@ -502,7 +474,7 @@ SEXTO LOG:
     "pending": "https://app-vivero-web.vercel.app/pago/pending"
   },
   "notification_url": "https://app-vivero-web.vercel.app/api/mercadopago/webhook",
-  "external_reference": "340f7a01-72d8-41b6-8529-d4a8092d0617",
+  "external_reference": "1643f282-0f1b-4993-a976-65bbaffe9756",
   "payment_methods": {
     "excluded_payment_methods": [
       {
@@ -550,13 +522,13 @@ SEXTO LOG:
     "installments": 12
   },
   "metadata": {
-    "order_id": "340f7a01-72d8-41b6-8529-d4a8092d0617",
+    "order_id": "1643f282-0f1b-4993-a976-65bbaffe9756",
     "customer_email": "lucasctmn@gmail.com",
-    "created_at": "2025-12-23T00:05:49.715Z"
+    "created_at": "2025-12-23T02:07:45.086Z"
   }
 }
-2025-12-23 00:05:49.715 [info] 🔒 Configuración de métodos de pago:
-2025-12-23 00:05:49.715 [info] - excludedPaymentMethods: [
+2025-12-23 02:07:45.086 [info] 🔒 Configuración de métodos de pago:
+2025-12-23 02:07:45.087 [info] - excludedPaymentMethods: [
   { id: 'rapipago' },
   { id: 'pagofacil' },
   { id: 'bapropagos' },
@@ -569,8 +541,8 @@ SEXTO LOG:
   { id: 'pago_facil' },
   { id: 'rapi_pago' }
 ]
-2025-12-23 00:05:49.715 [info] - excludedPaymentTypes: [ { id: 'ticket' }, { id: 'atm' } ]
-2025-12-23 00:05:49.715 [info] - payment_methods config: {
+2025-12-23 02:07:45.087 [info] - excludedPaymentTypes: [ { id: 'ticket' }, { id: 'atm' } ]
+2025-12-23 02:07:45.088 [info] - payment_methods config: {
   excluded_payment_methods: [
     { id: 'rapipago' },
     { id: 'pagofacil' },
@@ -587,8 +559,8 @@ SEXTO LOG:
   excluded_payment_types: [ { id: 'ticket' }, { id: 'atm' } ],
   installments: 12
 }
-2025-12-23 00:05:49.715 [info] 📋 Preferencia completa a enviar:
-2025-12-23 00:05:49.715 [info] {
+2025-12-23 02:07:45.088 [info] 📋 Preferencia completa a enviar:
+2025-12-23 02:07:45.088 [info] {
   "items": [
     {
       "id": "e52b9adf-6de3-4216-a1fa-771780d9dec4",
@@ -603,8 +575,8 @@ SEXTO LOG:
   ],
   "payer": {
     "email": "lucasctmn@gmail.com",
-    "name": "vamo",
-    "surname": "que funciona todo wachoo",
+    "name": "prueba",
+    "surname": "final sin errores",
     "phone": {
       "area_code": "11",
       "number": "313131313131"
@@ -621,7 +593,7 @@ SEXTO LOG:
     "pending": "https://app-vivero-web.vercel.app/pago/pending"
   },
   "notification_url": "https://app-vivero-web.vercel.app/api/mercadopago/webhook",
-  "external_reference": "340f7a01-72d8-41b6-8529-d4a8092d0617",
+  "external_reference": "1643f282-0f1b-4993-a976-65bbaffe9756",
   "payment_methods": {
     "excluded_payment_methods": [
       {
@@ -669,12 +641,12 @@ SEXTO LOG:
     "installments": 12
   },
   "metadata": {
-    "order_id": "340f7a01-72d8-41b6-8529-d4a8092d0617",
+    "order_id": "1643f282-0f1b-4993-a976-65bbaffe9756",
     "customer_email": "lucasctmn@gmail.com",
-    "created_at": "2025-12-23T00:05:49.715Z"
+    "created_at": "2025-12-23T02:07:45.086Z"
   }
 }
-2025-12-23 00:05:50.071 [info] 📨 Respuesta de Mercado Pago: {
+2025-12-23 02:07:45.384 [info] 📨 Respuesta de Mercado Pago: {
   "additional_info": "",
   "auto_return": "",
   "back_urls": {
@@ -687,14 +659,14 @@ SEXTO LOG:
   "collector_id": 174087864,
   "coupon_code": null,
   "coupon_labels": null,
-  "date_created": "2025-12-22T20:05:50.032-04:00",
+  "date_created": "2025-12-22T22:07:45.343-04:00",
   "date_of_expiration": null,
   "expiration_date_from": null,
   "expiration_date_to": null,
   "expires": false,
-  "external_reference": "340f7a01-72d8-41b6-8529-d4a8092d0617",
-  "id": "174087864-563a4fff-0482-40d6-b77c-28772b15825f",
-  "init_point": "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=174087864-563a4fff-0482-40d6-b77c-28772b15825f",
+  "external_reference": "1643f282-0f1b-4993-a976-65bbaffe9756",
+  "id": "174087864-80edf947-3352-4cf9-a1b5-82f38dec1200",
+  "init_point": "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=174087864-80edf947-3352-4cf9-a1b5-82f38dec1200",
   "internal_metadata": null,
   "items": [
     {
@@ -711,9 +683,9 @@ SEXTO LOG:
   "marketplace": "MP-MKT-4015405103617799",
   "marketplace_fee": 0,
   "metadata": {
-    "created_at": "2025-12-23T00:05:49.715Z",
+    "created_at": "2025-12-23T02:07:45.086Z",
     "customer_email": "lucasctmn@gmail.com",
-    "order_id": "340f7a01-72d8-41b6-8529-d4a8092d0617"
+    "order_id": "1643f282-0f1b-4993-a976-65bbaffe9756"
   },
   "notification_url": "https://app-vivero-web.vercel.app/api/mercadopago/webhook",
   "operation_type": "regular_payment",
@@ -732,8 +704,8 @@ SEXTO LOG:
       "number": "",
       "type": ""
     },
-    "name": "vamo",
-    "surname": "que funciona todo wachoo",
+    "name": "prueba",
+    "surname": "final sin errores",
     "date_created": null,
     "last_purchase": null
   },
@@ -794,7 +766,7 @@ SEXTO LOG:
     "pending": "",
     "success": ""
   },
-  "sandbox_init_point": "https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=174087864-563a4fff-0482-40d6-b77c-28772b15825f",
+  "sandbox_init_point": "https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=174087864-80edf947-3352-4cf9-a1b5-82f38dec1200",
   "site_id": "MLA",
   "shipments": {
     "default_shipping_method": null,
@@ -817,13 +789,13 @@ SEXTO LOG:
     "status": 201,
     "headers": {
       "date": [
-        "Tue, 23 Dec 2025 00:05:50 GMT"
+        "Tue, 23 Dec 2025 02:07:45 GMT"
       ],
       "content-type": [
         "application/json; charset=utf-8"
       ],
       "content-length": [
-        "1158"
+        "1151"
       ],
       "connection": [
         "keep-alive"
@@ -838,7 +810,7 @@ SEXTO LOG:
         "nosniff"
       ],
       "x-request-id": [
-        "924d1a56-bc29-4fa5-896f-5577c7524ad1"
+        "e615afcc-5995-4086-883c-3ba078d2aa03"
       ],
       "x-xss-protection": [
         "1; mode=block"
@@ -864,15 +836,15 @@ SEXTO LOG:
     }
   }
 }
-2025-12-23 00:05:50.270 [info] ✅ Preferencia de MP creada: {
-  id: '174087864-563a4fff-0482-40d6-b77c-28772b15825f',
-  init_point: 'https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=174087864-563a4fff-0482-40d6-b77c-28772b15825f'
+2025-12-23 02:07:45.600 [info] ✅ Preferencia de MP creada: {
+  id: '174087864-80edf947-3352-4cf9-a1b5-82f38dec1200',
+  init_point: 'https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=174087864-80edf947-3352-4cf9-a1b5-82f38dec1200'
 }
-2025-12-23 00:05:50.270 [info] 💾 Almacenando datos temporales para webhook...
-2025-12-23 00:05:50.448 [info] ✅ Datos temporales almacenados para webhook (email REAL guardado)
-2025-12-23 00:05:50.448 [info] 🎉 === PREFERENCIA CREADA EXITOSAMENTE (SIN ORDEN AÚN) ===
-2025-12-23 00:05:50.448 [info] ✅ Datos finales: {
-  temp_order_id: '340f7a01-72d8-41b6-8529-d4a8092d0617',
-  preference_id: '174087864-563a4fff-0482-40d6-b77c-28772b15825f',
-  init_point: 'https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=174087864-563a4fff-0482-40d6-b77c-28772b15825f'
+2025-12-23 02:07:45.600 [info] 💾 Almacenando datos temporales para webhook...
+2025-12-23 02:07:45.780 [info] ✅ Datos temporales almacenados para webhook (email REAL guardado)
+2025-12-23 02:07:45.780 [info] 🎉 === PREFERENCIA CREADA EXITOSAMENTE (SIN ORDEN AÚN) ===
+2025-12-23 02:07:45.781 [info] ✅ Datos finales: {
+  temp_order_id: '1643f282-0f1b-4993-a976-65bbaffe9756',
+  preference_id: '174087864-80edf947-3352-4cf9-a1b5-82f38dec1200',
+  init_point: 'https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=174087864-80edf947-3352-4cf9-a1b5-82f38dec1200'
 }

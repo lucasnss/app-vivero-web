@@ -3,18 +3,21 @@
 ## 📌 TL;DR (Si no tienes tiempo)
 
 ```
-Status: ✅ Sistema casi listo para producción
+Status: ✅ SISTEMA LISTO PARA PRODUCCIÓN
 
-Cambios hechos hoy:
+Cambios hechos ayer:
 1. ✅ Webhook ahora rechaza firmas falsas (seguridad activada)
 2. ✅ Documentación completa creada
 3. ✅ Build exitoso (sin errores)
 
-Qué falta:
-1. ⚠️ Configurar secret en Vercel (5 minutos)
-2. ⚠️ Hacer prueba real de pago ($100) (1.5 horas)
+Credenciales:
+✅ Secret key de PRODUCCIÓN ya configurado en Vercel
+✅ Todas las variables de entorno configuradas
 
-Resultado: Lanzable en 2 horas si todo va bien
+Qué falta AHORA:
+1. ⚠️ Hacer prueba real de pago ($100 ARS) (1.5 horas)
+
+Resultado: Lanzable en 1.5 horas si prueba va bien
 ```
 
 ---
@@ -61,38 +64,37 @@ Código listo para implementar después del lanzamiento.
 
 ---
 
-## ⏱️ PRÓXIMOS PASOS (2 horas)
+## ⏱️ PRÓXIMO PASO (1.5 horas)
 
-### Paso 1: Configurar Secret (5 min)
+### ✅ Paso 1: Configurar Secret (YA HECHO)
 
-1. Ir a: https://www.mercadopago.com.ar/developers/panel
-2. Webhooks → Configuración → copiar Secret Key
-3. Ir a Vercel → Settings → Environment Variables
-4. Agregar: `MERCADOPAGO_WEBHOOK_SECRET=sk_...`
-5. Esperar 2 min a que se aplique
+La secret key de PRODUCCIÓN ya está configurada en Vercel:
+- ✅ `MERCADOPAGO_WEBHOOK_SECRET` está en Vercel Environment Variables
+- ✅ Todas las credenciales de PRODUCCIÓN están configuradas
+- ✅ Webhook está listo para validar firmas
 
-**Documento**: `GUIA-CONFIGURACION-WEBHOOK-SECRET.md`
+### Paso 2: Prueba Real (1.5 horas) ← SOLO ESTO FALTA
 
-### Paso 2: Prueba Real (1.5 horas)
+Sigue exactamente estos pasos:
 
-1. Abrir app: https://app-vivero-web.vercel.app
-2. Comprar una planta por $100 ARS
-3. Validar 10 checkpoints:
-   - Webhook procesado ✓
-   - Orden creada ✓
-   - Stock descontado ✓
-   - Email enviado ✓
-   - Dinero en MP ✓
-   - Visible en admin ✓
-   - etc...
+1. Abre: https://app-vivero-web.vercel.app
+2. Busca una planta (cualquiera, de preferencia $100 ARS)
+3. Agrega al carrito
+4. Ve a carrito → Proceder a pago
+5. Completa datos (usa TU EMAIL)
+6. Elige método de envío
+7. Click "Ir a Mercado Pago"
+8. **Paga con tarjeta REAL** ($100 ARS será cobrado)
+9. Después del pago, verifica 10 checkpoints en la guía
+10. **Documenta resultado**
 
-**Documento**: `GUIA-PRUEBA-REAL-PRODUCCION.md`
+**Documento**: `GUIA-PRUEBA-REAL-PRODUCCION.md` (checklist completo con 10 verificaciones)
 
-### Paso 3: Lanzar (2 min)
+### Paso 3: Lanzar (si prueba OK)
 
-Si todo OK:
 ```bash
-git push → Vercel auto-deploya → ¡LANZADO!
+✅ Si todo funciona → ya está deployado (Vercel auto-actualiza)
+✅ Sistema está listo
 ```
 
 ---
@@ -102,9 +104,9 @@ git push → Vercel auto-deploya → ¡LANZADO!
 ### ¿CUÁNDO LANZAR?
 
 ```
-❌ HOY (sin configurar secret) = MUY RIESGOSO
-✅ HOY DESPUÉS DE CONFIGURAR + PROBAR = SEGURO
-⏱️ TIMING: Puedes lanzar en 2 horas si empiezas ahora
+✅ HOY (secret ya configurado) = SEGURO
+✅ Solo hace falta prueba real (1.5 horas)
+⏱️ TIMING: Puedes lanzar en 1.5 horas si empiezas AHORA
 ```
 
 ### ¿CUÁL ES EL RIESGO?
@@ -128,9 +130,9 @@ CON CAMBIOS + SECRET CONFIGURADO:
 
 ### HOY (Antes de lanzar)
 - [ ] Leer `RESUMEN-CAMBIOS-CRITICOS.md` (10 min)
-- [ ] Configurar secret en Vercel (5 min)
-- [ ] Hacer prueba real (1.5 horas)
-- [ ] Si TODO OK → git push → lanzar ✅
+- [x] ✅ Configurar secret en Vercel (YA HECHO)
+- [ ] Hacer prueba real (1.5 horas) ← PRÓXIMA
+- [ ] Si TODO OK → Sistema está lanzado ✅
 
 ### DENTRO DE 3 DÍAS (Mejoras)
 - [ ] Implementar estados pending/rejected/cancelled
@@ -141,19 +143,20 @@ CON CAMBIOS + SECRET CONFIGURADO:
 
 ## 🚨 IMPORTANTE
 
-### Si no configuras el secret:
+### ✅ Secret ya está configurado
 ```
-❌ Rechazo de firma inválida está ACTIVADO
-❌ Webhooks SIN secret no se procesarán
-❌ Pagos no crearán órdenes
-❌ Sistema FALLARÁ al lanzar
+✅ MERCADOPAGO_WEBHOOK_SECRET configurado en Vercel
+✅ Rechazo de firma inválida está ACTIVADO
+✅ Webhooks con firma válida se procesarán
+✅ Sistema está SEGURO
 ```
 
-### La solución:
+### Lo que falta:
 ```
-✅ Configurar secret ANTES de lanzar
-✅ Es obligatorio, no opcional
-✅ Tarda 5 minutos
+Única cosa: HACER PRUEBA REAL
+- Compra $100 en la app
+- Verifica 10 checkpoints
+- Documenta resultado
 ```
 
 ---
@@ -199,11 +202,11 @@ R: Pierdes ~$100-500 por día (ventas que no ocurren).
 
 ```
 ✅ RECOMENDACIÓN: Lanzar HOY si:
-1. Configuras secret en Vercel ✓
+1. ✅ Secret configurado en Vercel (YA HECHO) ✓
 2. Haces prueba real y funciona ✓
 3. Ves dinero en cuenta MP ✓
 
-Tiempo: 2 horas
+Tiempo: 1.5 horas (solo la prueba)
 Riesgo: BAJO si sigues guías
 Beneficio: $500+/día en revenue
 ```
@@ -229,14 +232,23 @@ Beneficio: $500+/día en revenue
 
 ---
 
-## 🚀 SIGUIENTE ACCIÓN
+## 🚀 SIGUIENTE ACCIÓN (AHORA MISMO)
 
 ```
-AHORA:
-1. Lee RESUMEN-CAMBIOS-CRITICOS.md (10 min)
-2. Si decides lanzar → lee PLAN-LANZAMIENTO-PRODUCCION.md
-3. Sigue los 2 pasos de configuración + prueba
-4. ¡LANZAR! 🚀
+PASO 1 (10 min):
+→ Lee RESUMEN-CAMBIOS-CRITICOS.md (contexto)
+
+PASO 2 (1.5 horas):
+→ Abre https://app-vivero-web.vercel.app
+→ Haz una compra de $100 ARS (cualquier planta)
+→ Verifica los 10 checkpoints en GUIA-PRUEBA-REAL-PRODUCCION.md
+→ Documenta resultado
+
+PASO 3 (si todo OK):
+✅ Sistema está LANZADO (Vercel ya lo está sirviendo)
+✅ Dinero entra a tu cuenta MP automáticamente
+
+¡EMPEZÁ AHORA! 🚀
 ```
 
 ---
