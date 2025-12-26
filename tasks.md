@@ -2,10 +2,51 @@ Ultima prueba de cambio de cuenta de git. . . . . . . .
 # 📋 Tasks - ViveroWeb
 
 ## Estado General
-- **Versión**: 2.2.0
-- **Última actualización**: 2025-12-16
+- **Versión**: 2.2.1
+- **Última actualización**: 2025-12-20
 - **Estado del Build**: ✅ Exitoso (Exit code: 0)
-- **Listo para Deploy**: ⚠️ Requiere configuración de Secret Key en Vercel
+- **Listo para Deploy**: ⚠️ Requiere 3 pasos críticos antes de lanzar
+
+---
+
+## 🔴 FASE ACTUAL: FINALIZACIÓN PRE-PRODUCCIÓN
+
+### ✅ Completadas (2025-12-20) - CRÍTICAS
+
+- [x] **Activar rechazo de webhooks sin firma válida** (🔴 CRÍTICA - SEGURIDAD)
+  - [x] Descomentado return 401 en `webhook/route.ts` (línea 116)
+  - [x] Modo debug completamente desactivado
+  - [x] Intenta no autenticados registrados en activity_logs
+  - **Archivo modificado**: `app/api/mercadopago/webhook/route.ts`
+  - **Impacto**: Webhooks falsos ya NO pueden crear órdenes
+
+- [ ] **Configurar MERCADOPAGO_WEBHOOK_SECRET** (🔴 CRÍTICA - BLOQUEANTE)
+  - [ ] Obtener secret de MP Dashboard
+  - [ ] Agregar a `.env.local` para testing
+  - [ ] Agregar a Vercel Environment Variables
+  - [ ] Verificar que webhooks sean aceptados
+  - **Documentación**: `GUIA-CONFIGURACION-WEBHOOK-SECRET.md`
+  - **Dependencia**: Debe hacerse ANTES de hacer deploy
+
+- [ ] **Hacer prueba real de pago en producción** (🔴 CRÍTICA - VALIDACIÓN)
+  - [ ] Seguir guía en `GUIA-PRUEBA-REAL-PRODUCCION.md`
+  - [ ] Completar checklist de 10 pasos
+  - [ ] Documentar resultado
+  - **Dependencia**: Debe hacerse DESPUÉS de configurar secret
+
+### ➡️ PRÓXIMAS (Después de críticas)
+
+- [ ] **Manejar estados pending/rejected/cancelled** (🟡 URGENTE)
+  - Documentación: `IMPLEMENTACION-ESTADOS-PAGO-PENDIENTES.md`
+  - Estimado: 1.5 horas
+  
+- [ ] **Crear dashboard de ventas** (🟡 URGENTE)
+  - Métricas diarias, conversión, fallos
+  - Estimado: 2 horas
+
+- [ ] **Cron job de reconciliación** (🟡 URGENTE)
+  - Sincronizar pagos MP con BD
+  - Estimado: 2 horas
 
 ---
 

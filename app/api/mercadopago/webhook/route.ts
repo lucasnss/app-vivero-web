@@ -85,14 +85,14 @@ export async function POST(request: NextRequest) {
 
     if (!isSignatureValid) {
       console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-      console.error('🚨 [WEBHOOK] FIRMA INVÁLIDA - ADVERTENCIA')
+      console.error('🚨 [WEBHOOK] FIRMA INVÁLIDA - RECHAZANDO')
       console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
       
-      // ⚠️ TEMPORAL: Log pero NO rechazar (para debugging)
+      // 🔒 SEGURIDAD CRÍTICA: Registrar intento de acceso no autorizado
       await logService.recordActivity({
         action: 'webhook_signature_invalid',
         entity_type: 'security',
-        entity_id: 'webhook_debug',
+        entity_id: 'webhook_rejected',
         details: {
           url: request.url,
           headers: {
@@ -103,23 +103,23 @@ export async function POST(request: NextRequest) {
           query_params: Object.fromEntries(request.nextUrl.searchParams),
           has_secret_key: !!process.env.MERCADOPAGO_WEBHOOK_SECRET,
           timestamp: new Date().toISOString(),
-          severity: 'warning',
-          note: 'MODO DEBUG - Procesando webhook a pesar de firma inválida'
+          severity: 'critical',
+          note: 'Intento de webhook no autenticado - RECHAZADO por seguridad'
         }
       })
 
-      // ⚠️ TEMPORAL: Continuar procesando en lugar de rechazar
-      console.warn('⚠️ [WEBHOOK] CONTINUANDO A PESAR DE FIRMA INVÁLIDA (MODO DEBUG)')
+      // ✅ RECHAZAR WEBHOOK NO AUTENTICADO
+      console.error('❌ Webhook rechazado: firma inválida o secret no configurado')
       console.log('')
       
-      // ❌ COMENTADO TEMPORALMENTE PARA DEBUGGING
-      // return NextResponse.json(
-      //   { 
-      //     error: 'Invalid signature',
-      //     message: 'Webhook signature validation failed'
-      //   },
-      //   { status: 401 }
-      // )
+      // 🔒 RETORNAR 401 - RECHAZAR ACCESO
+      return NextResponse.json(
+        { 
+          error: 'Invalid signature',
+          message: 'Webhook signature validation failed. Check MERCADOPAGO_WEBHOOK_SECRET in environment variables.'
+        },
+        { status: 401 }
+      )
     } else {
       console.log('✅ [WEBHOOK] Firma validada correctamente')
       console.log('')

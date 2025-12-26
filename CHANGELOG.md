@@ -7,6 +7,63 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.2.1] - 2025-12-20
+
+### 🔒 Seguridad (CRÍTICO - Aplicado)
+
+- **Activación de rechazo de webhooks sin firma válida**
+  - ✅ Descomentado return HTTP 401 en webhook route (línea 116-122)
+  - ✅ Modo debug completamente desactivado
+  - ✅ Webhooks no autenticados ahora son rechazados obligatoriamente
+  - ✅ Mejora de logs: intenta no autenticados registrados con severidad "critical"
+
+### 📚 Documentación Nueva (CRÍTICA)
+
+- `GUIA-CONFIGURACION-WEBHOOK-SECRET.md`
+  - Instrucciones paso a paso para obtener secret en MP
+  - Cómo configurar en `.env.local` (desarrollo)
+  - Cómo configurar en Vercel (producción)
+  - Verificación y troubleshooting
+
+- `GUIA-PRUEBA-REAL-PRODUCCION.md`
+  - Checklist de 10 pasos para validar sistema completo
+  - Cómo verificar: orden creada, stock descontado, email enviado
+  - Cómo verificar dinero en cuenta MP
+  - Cómo verificar en admin
+  - Soluciones a problemas comunes
+
+- `IMPLEMENTACION-ESTADOS-PAGO-PENDIENTES.md`
+  - Documentación de implementación de 3 nuevos métodos en orderService
+  - Manejo de estados: pending, rejected, cancelled
+  - Código listo para copiar-pegar
+  - Pruebas específicas para cada estado
+  - Estimado: 1.5 horas de trabajo
+
+### 📄 Archivos Modificados
+
+- `app/api/mercadopago/webhook/route.ts`
+  - Descomentado rechazo de firma inválida
+  - Cambio de severidad en logs de "warning" a "critical"
+  - Actualizado mensaje de error con referencia al secret
+
+- `tasks.md`
+  - Agregada sección "FASE ACTUAL: FINALIZACIÓN PRE-PRODUCCIÓN"
+  - Listado de 3 pasos críticos antes de lanzar
+  - Links a documentación nueva
+
+### 🎯 PRÓXIMAS ACCIONES REQUERIDAS
+
+1. **INMEDIATO (antes de cualquier deploy)**:
+   - Seguir `GUIA-CONFIGURACION-WEBHOOK-SECRET.md`
+   - Hacer prueba real con `GUIA-PRUEBA-REAL-PRODUCCION.md`
+
+2. **DESPUÉS DE VALIDAR (1-2 días)**:
+   - Implementar estados pending/rejected/cancelled
+   - Crear dashboard de ventas
+   - Cron job de reconciliación
+
+---
+
 ## [2.2.0] - 2025-12-16
 
 ### 🔒 Seguridad (CRÍTICO)
